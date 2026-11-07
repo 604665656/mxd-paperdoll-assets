@@ -15,12 +15,34 @@ IGNORE = shutil.ignore_patterns("_cache", "__pycache__", "*.log", "*.part",
                                 ".git", "*.pyc")
 
 def copy_dir(src, dst, ignore=IGNORE):
+    """增量同步: 已存在且大小/修改时间相同的文件直接跳过。"""
     if not os.path.isdir(src):
         return 0
-    shutil.copytree(src, dst, ignore=ignore, dirs_exist_ok=True)
+    os.makedirs(dst, exist_ok=True)
+    copied = 0
+    for root, dirs, files in os.walk(src):
+        skipped = set(ignore(root, dirs + files) or [])
+        dirs[:] = [d for d in dirs if d not in skipped]
+        files = [f for f in files if f not in skipped]
+        rel = os.path.relpath(root, src)
+        out = dst if rel == "." else os.path.join(dst, rel)
+        os.makedirs(out, exist_ok=True)
+        for f in files:
+            s = os.path.join(root, f)
+            d = os.path.join(out, f)
+            try:
+                if (os.path.exists(d)
+                        and os.path.getsize(d) == os.path.getsize(s)
+                        and abs(os.path.getmtime(d) - os.path.getmtime(s)) < 2):
+                    continue
+            except OSError:
+                pass
+            shutil.copy2(s, d)
+            copied += 1
     n = 0
-    for _, _, files in os.walk(dst):
-        n += len(files)
+    for _, _, fs in os.walk(dst):
+        n += len(fs)
+    print(f"    (本次实际复制 {copied:,} 个新文件)", flush=True)
     return n
 
 def copy_file(src, dst):
@@ -48,13 +70,16 @@ for d in ("editor", "animations"):
 # 4) 数据: 浏览器 data.js + 统计/清单
 os.makedirs(os.path.join(PUB, "_index"), exist_ok=True)
 copy_file(IDX, os.path.join(PUB, "_index", "data.js"))
-for f in ("stats.json", "images.txt"):
+for f in ("stats.json", "images.txt", "wz_names.json"):
     p = os.path.join(ROOT, "_index", f)
     if os.path.exists(p) and os.path.getsize(p) < 20 * 1048576:
         copy_file(p, os.path.join(PUB, "_index", f))
+# WZ String.wz 原始名称表(11 张表, 约 20MB)
+print("wz_strings:", copy_dir(os.path.join(ROOT, "_index", "wz_strings"),
+                              os.path.join(PUB, "_index", "wz_strings")))
 
 # 5) 页面
-for f in ("浏览.html", "素材库报告.html", "一键刷新.bat"):
+for f in ("浏览.html", "素材库报告.html", "一键刷新.bat", "推送到GitHub.bat"):
     copy_file(os.path.join(ROOT, f), os.path.join(PUB, f))
 
 # 6) 复现脚本
@@ -125,20 +150,24 @@ readme = f"""# 冒险岛纸娃娃素材库 · 离线索引
 | `animations/` | 角色动作 GIF / PNG 序列 |
 | `editor/` | 纸娃娃编辑器前端静态文件（`serve_editor.py` 可在本地起服务代理 API） |
 | `_index/data.js` | 离线浏览器的数据索引（分类 / 名称 / ID / 相对图片路径） |
+| `_index/wz_names.json`、`_index/wz_strings/` | 从 WZ `String.wz` 提取的 **15 万+ ID → 中文名称** 映射及 11 张原始表 |
 | `scripts/` | 抓取、合成、统计、重建、一键刷新的全部复现脚本 |
 
 当前索引条目：**{total:,}** 条（WZ 直抽 {wz_cnt:,} + 原站图 {ds_cnt:,}），覆盖 **{n_cat}** 个分类。
+其中包含主站元数据记录与**本地散图补充**（道具图标、主站索引未收录的 WZ 装备图），散图名称由 WZ 名称表回填。
 
 ## 数据来源与构建
 
 - 元数据与图片路径：`mxd.dvg.cn` 的 `_legacy=1` 列表接口。
 - 外观缩略图：`mxdwzapi.dvg.cn` 的 WZ node 接口（`/node/json/...` + `/node/image/...`），按 z-order 与 origin 偏移做 alpha 合成。
+- ID→名称：`mxdwzapi.dvg.cn/node/json/String/*.img`（Consume / Eqp / Cash / Etc / Ins / Pet / Mob / Npc / Skill 等），用于补齐主站 item 列表未抓完的名称。
 - 主站曾触发阿里云 WAF 限流，下载器采用**断点续传 + 指数退避**，解封后自动续传。
 
 复现步骤（需 Python 3 + `requests` / `Pillow`）：
 
 ```bash
-python scripts/fetch_index.py          # 抓元数据
+python scripts/fetch_index.py          # 抓元数据(主站可用时)
+python scripts/fetch_wz_strings.py     # WZ ID→名称表
 python scripts/wz_preview.py all       # 直抽外观缩略图
 python scripts/extract_icons.py        # 机器人/宠物装备图标
 python scripts/build_viewer.py         # 重建 浏览.html
@@ -216,7 +245,7 @@ footer{{margin-top:34px;color:#6b7280;font-size:11px}}
 <table><thead><tr><th>分类</th><th>数量</th><th>占比</th></tr></thead><tbody>{rows}</tbody></table>
 
 <div class="note">
-数据来源：第三方纸娃娃站 <code>mxd.dvg.cn</code> 的元数据，以及开放 WZ 接口 <code>mxdwzapi.dvg.cn</code> 的精灵图合成。
+数据来源：第三方纸娃娃站 <code>mxd.dvg.cn</code> 的元数据，以及开放 WZ 接口 <code>mxdwzapi.dvg.cn</code> 的精灵图合成与 <code>String.wz</code> 名称表。
 页面与图片均为静态文件，可完全离线运行。<br><br>
 <b>免责声明</b>：游戏素材著作权归 NEXON 及原权利人所有，本仓库仅用于个人学习、研究与离线参考，非商业用途；如权利人认为内容不宜公开，请通过仓库 Issue 联系删除。
 </div>

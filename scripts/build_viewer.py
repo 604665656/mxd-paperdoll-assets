@@ -12,7 +12,55 @@ MODULE_LABEL = {
     "appearance": "外观图鉴", "item": "道具图鉴", "cash": "商城图鉴",
     "map": "地图图鉴", "npc": "NPC图鉴", "skill": "技能图鉴",
     "mob": "怪物图鉴", "pet": "宠物图鉴",
+    "extra": "补充素材",
 }
+
+IMG_EXT = (".png", ".webp", ".jpg", ".jpeg", ".gif")
+
+# WZ String.wz 名称表 (fetch_wz_strings.py 生成)
+_NAMES_PATH = os.path.join(IDX, "wz_names.json")
+try:
+    NAMES = json.load(open(_NAMES_PATH, encoding="utf-8"))
+except Exception:
+    NAMES = {}
+
+
+def lookup_name(gid):
+    k = str(gid)
+    return NAMES.get(k) or NAMES.get(k.lstrip("0")) or ""
+
+
+def scan_extra(used):
+    """把本地存在、但没有对应元数据记录的图片也纳入检索。
+
+    覆盖两类：原站 dbsource 图标散图、WZ 直抽但主站索引里没有的装备图。
+    """
+    out = []
+    for sub in ("dbsource", "wz_preview"):
+        base = os.path.join(ROOT, sub)
+        if not os.path.isdir(base):
+            continue
+        for r, dirs, files in os.walk(base):
+            dirs[:] = [d for d in dirs if d != "_cache"]
+            for f in files:
+                if not f.lower().endswith(IMG_EXT):
+                    continue
+                full = os.path.join(r, f)
+                rel = os.path.relpath(full, ROOT).replace(os.sep, "/")
+                if rel in used:
+                    continue
+                used.add(rel)
+                gid = os.path.splitext(f)[0]
+                reldir = os.path.relpath(r, ROOT).replace(os.sep, "/")
+                if sub == "wz_preview":
+                    cat = os.path.basename(r)
+                elif reldir.endswith("icon/item"):
+                    cat = "道具图标"
+                else:
+                    cat = reldir.split("/")[-1] or sub
+                name = lookup_name(gid) or gid
+                out.append({"m": "extra", "c": cat, "i": gid, "n": name, "p": rel})
+    return out
 
 
 def main():
@@ -41,8 +89,15 @@ def main():
                     local = wp
             if not local:
                 continue
+            nm = r["name"] or lookup_name(r["id"])
             recs.append({"m": r["module"], "c": r["category"], "i": r["id"],
-                         "n": r["name"], "p": local})
+                         "n": nm, "p": local})
+
+    used = set(x["p"] for x in recs)
+    extra = scan_extra(used)
+    recs.extend(extra)
+    print(f"元数据记录 {len(recs)-len(extra):,} 条 + 本地散图 {len(extra):,} 张 "
+          f"(名称表 {len(NAMES):,} 项)")
 
     cats = Counter((r["m"], r["c"]) for r in recs)
     stat = [{"m": m, "c": c, "n": n} for (m, c), n in sorted(cats.items(), key=lambda x: -x[1])]
@@ -96,7 +151,9 @@ document.getElementById('total').textContent=D.length.toLocaleString()+' 张';
 var sel=document.getElementById('cat');
 CATS.forEach(function(c){
   var o=document.createElement('option');
-  o.value=c.m+'|'+c.c; o.textContent=c.c? (c.c+' ('+c.n+')') : (c.m+' ('+c.n+')');
+  o.value=c.m+'|'+c.c;
+  var pre=(c.m==='extra')?'补充·':'';
+  o.textContent=c.c? (pre+c.c+' ('+c.n+')') : (pre+c.m+' ('+c.n+')');
   sel.appendChild(o);
 });
 function apply(){

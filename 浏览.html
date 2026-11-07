@@ -44,7 +44,9 @@ document.getElementById('total').textContent=D.length.toLocaleString()+' 张';
 var sel=document.getElementById('cat');
 CATS.forEach(function(c){
   var o=document.createElement('option');
-  o.value=c.m+'|'+c.c; o.textContent=c.c? (c.c+' ('+c.n+')') : (c.m+' ('+c.n+')');
+  o.value=c.m+'|'+c.c;
+  var pre=(c.m==='extra')?'补充·':'';
+  o.textContent=c.c? (pre+c.c+' ('+c.n+')') : (pre+c.m+' ('+c.n+')');
   sel.appendChild(o);
 });
 function apply(){

@@ -2,15 +2,14 @@
 """把本仓库创建/推送为 GitHub 上的公开仓库。
 
 用法:
-    set GITHUB_TOKEN=ghp_xxxxxxxxxxxx
-    python scripts/push_github.py [仓库名]
+    python scripts/push_github.py [仓库名] [token]
 
-或把 token 作为第二个参数传入:
-    python scripts/push_github.py mxd-paperdoll-assets ghp_xxxxxxxxxxxx
-
+token 获取优先级: 命令行参数 > GITHUB_TOKEN / GH_TOKEN 环境变量
+                 > 本机 Git Credential Manager 已保存的凭据。
 说明:
 - token 需要 repo 权限(经典 PAT) 或 Contents: write + Administration: write(细粒度)。
 - 仓库一律创建为 public。若同名仓库已存在则直接复用并推送。
+- 推送完成后自动开启 GitHub Pages(master / root)。
 - token 不会写入 .git/config(通过 http.extraheader 临时传递)。
 """
 import os, sys, subprocess, json, urllib.request
@@ -42,14 +41,32 @@ def git(*args, check=True):
     return p.stdout.strip()
 
 
+def token_from_credential_manager():
+    """从本机 Git Credential Manager 读取已保存的 github.com 凭据(不落盘)。"""
+    try:
+        p = subprocess.run(["git", "credential", "fill"], cwd=ROOT,
+                           input="protocol=https\nhost=github.com\n\n",
+                           text=True, capture_output=True, timeout=20)
+        for line in p.stdout.splitlines():
+            if line.startswith("password="):
+                return line.split("=", 1)[1]
+    except Exception as e:
+        print("读取本机凭据失败:", e)
+    return ""
+
+
 def main():
     repo = sys.argv[1] if len(sys.argv) > 1 else DEFAULT_REPO
     token = (sys.argv[2] if len(sys.argv) > 2 else
-             os.environ.get("GITHUB_TOKEN") or os.environ.get("GH_TOKEN"))
+             os.environ.get("GITHUB_TOKEN") or os.environ.get("GH_TOKEN")
+             or token_from_credential_manager())
     if not token:
-        print("缺少 GitHub token。请设置环境变量 GITHUB_TOKEN 或作为第二个参数传入。")
+        print("缺少 GitHub token。请设置 GITHUB_TOKEN，或在 Git 凭据管理器中登录 GitHub。")
         print("获取方式: GitHub → Settings → Developer settings → Personal access tokens")
         return 1
+    print("令牌来源:", "参数/环境变量" if len(sys.argv) > 2 or
+          os.environ.get("GITHUB_TOKEN") or os.environ.get("GH_TOKEN")
+          else "本机 Git 凭据管理器")
 
     print("仓库名:", repo, "(public)")
     try:
@@ -98,14 +115,29 @@ def main():
     basic = base64.b64encode(f"{user}:{token}".encode()).decode()
     p = subprocess.run(
         ["git", "-c", f"http.extraheader=Authorization: Basic {basic}",
+         "-c", "http.postBuffer=524288000", "-c", "http.lowSpeedLimit=0",
+         "-c", "http.lowSpeedTime=999999",
          "push", "-u", "origin", branch],
         cwd=ROOT, capture_output=True, text=True, encoding="utf-8", errors="replace")
     print((p.stdout or "")[-1500:])
     if p.returncode != 0:
         print("推送失败:", (p.stderr or "")[-1500:])
         return 1
+    # 自动开启 GitHub Pages (master / root)
+    try:
+        status, _ = api("POST", f"/repos/{user}/{repo}/pages", token,
+                        {"source": {"branch": branch, "path": "/"}})
+        print("已开启 GitHub Pages:", status)
+    except urllib.error.HTTPError as e:
+        body = e.read().decode() or "{}"
+        if e.code in (409, 422):
+            print("Pages 已存在或已配置，跳过:", e.code)
+        else:
+            print("Pages 开启失败(可稍后在 Settings → Pages 手动开启):", e.code, body[:200])
+    except Exception as e:
+        print("Pages 开启失败(可手动开启):", e)
+
     print("\n完成! 仓库:", f"https://github.com/{user}/{repo}")
-    print("开启 Pages: Settings → Pages → Deploy from branch → master / (root)")
     print("看板地址:", f"https://{user}.github.io/{repo}/")
     return 0
 

@@ -74,6 +74,19 @@ rows.sort(key=lambda x: -x["total"])
 grand_total = sum(r["total"] for r in rows)
 grand_have = sum(r["have"] for r in rows)
 
+# 全局数据（浏览器索引 + WZ 名称表）
+viewer_total = 0
+names_total = 0
+try:
+    _s = open(os.path.join(ROOT, "_index", "data.js"), encoding="utf-8").read()
+    viewer_total = len(json.loads(_s[_s.index("=") + 1:_s.rstrip().rstrip(";")])["items"])
+except Exception:
+    pass
+try:
+    names_total = len(json.load(open(os.path.join(ROOT, "_index", "wz_names.json"), encoding="utf-8")))
+except Exception:
+    pass
+
 def pct(x):
     return f"{x*100:.1f}%"
 
@@ -133,6 +146,8 @@ summary{{cursor:pointer;color:var(--dim)}} summary:hover{{color:var(--acc)}}
 <div class="card"><b>{grand_have:,}</b><span>本地已有图片</span></div>
 <div class="card"><b>{pct(grand_have/grand_total if grand_total else 0)}</b><span>总覆盖率</span></div>
 <div class="card"><b>{sum(1 for r in rows if r['hosted'])}</b><span>WZ 直抽分类</span></div>
+<div class="card"><b>{viewer_total:,}</b><span>浏览器可检索条目</span></div>
+<div class="card"><b>{names_total:,}</b><span>WZ ID→名称映射</span></div>
 </div>
 <table><thead><tr>
 <th>分类</th><th>总条目</th><th>WZ直抽</th><th>dbsource</th><th>本地已有</th><th>覆盖率</th><th>ID 区间</th><th>缺失</th>
@@ -141,7 +156,9 @@ summary{{cursor:pointer;color:var(--dim)}} summary:hover{{color:var(--acc)}}
 </tbody></table>
 <h2>缺失明细（WZ 直抽分类，点击展开）</h2>
 {''.join(det) if det else '<div class="sub">无（或缺失过多未展开）</div>'}
-<div class="meta" style="margin-top:24px">说明：WZ直抽=从开放 WZ 接口抽的缩略图；dbsource=封锁前从主站下载的图；缺失中的 404=源站无此 ID，空=仅有 1×1 占位无美术。非托管分类(椅子/宠物/效果等)此接口不提供精灵图。</div>
+<div class="meta" style="margin-top:24px">说明：本表只统计<b>外观图鉴</b>（63,523 条主站记录）；浏览器另有道具图标与 WZ 补充散图，故「浏览器可检索条目」大于本表总数。<br>
+WZ直抽=从开放 WZ 接口抽的缩略图；dbsource=封锁前从主站下载的图；缺失中的 404=源站无此 ID，空=仅有 1×1 占位无美术。非托管分类(椅子/宠物/效果等)此接口不提供精灵图。<br>
+ID→名称映射来自 WZ <code>String.wz</code>（Consume / Eqp / Cash / Etc / Ins / Pet / Mob / Npc / Skill），用于补齐主站 item 列表未抓完的部分。</div>
 </body></html>"""
 
 with open(OUT, "w", encoding="utf-8") as f:

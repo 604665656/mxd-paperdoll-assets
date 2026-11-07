@@ -1,6 +1,10 @@
 # -*- coding: utf-8 -*-
-"""一键刷新: WZ 直抽补齐 -> 图标 -> 重建浏览器 -> 重生成报告; 主站若解封则补齐 dbsource 大图与 item 索引。
-已抽取的会跳过(resume), 只补新增/之前失败的。双击 一键刷新.bat 亦可。"""
+"""一键刷新: WZ 名称表 -> WZ 直抽补齐 -> 图标 -> (主站可用时)补元数据与大图
+-> 重建浏览器 / 报告 -> 可选同步发布目录。
+
+所有步骤都支持断点续传, 已完成的会跳过。
+双击 一键刷新.bat 亦可; 追加 --publish 会额外同步 mxd-gallery 发布目录。
+"""
 import os, sys, subprocess
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -16,7 +20,7 @@ def run(name, *args):
 
 
 def probe_main():
-    """探测主站是否解封(200=可用)"""
+    """探测主站是否可用(200=可用; 520/403=CDN 或 WAF 限制)"""
     try:
         import requests
         r = requests.get("https://mxd.dvg.cn/zhiwawa_v4/", timeout=8,
@@ -27,24 +31,33 @@ def probe_main():
 
 
 def main():
+    publish = "--publish" in sys.argv
     print("=" * 52)
     print(" 冒险岛素材库 · 一键刷新")
     print("=" * 52)
-    # 1) WZ 直抽补齐(已抽的跳过) + 图标
+
+    # 1) WZ 接口(独立域名, 通常可用): 名称表 + 外观缩略图 + 图标
+    run("fetch_wz_strings.py")
     run("wz_preview.py", "all")
     run("extract_icons.py")
-    # 2) 重建离线浏览器 + 统计报告
-    run("build_viewer.py")
-    run("make_report.py")
-    # 3) 主站解封则补齐 dbsource 大图与 item 索引
+
+    # 2) 主站可用时才补元数据与原始大图
     if probe_main():
-        print("\n[主站可用] 开始补齐 item 索引 + dbsource 大图(可能较久)...", flush=True)
+        print("\n[主站可用] 补齐模块索引 + dbsource 大图(可能较久)...", flush=True)
         run("fetch_index.py")
+        run("build_manifest.py")
         run("fetch_images.py")
     else:
-        print("\n[主站仍被 WAF 封锁] 跳过 dbsource 大图 / item 索引; 本次仅刷新 WZ 直抽部分。", flush=True)
+        print("\n[主站不可用] 跳过 item 索引 / dbsource 大图; 本次刷新本地与 WZ 部分。", flush=True)
+
+    # 3) 无论主站是否可用, 最后统一重建索引页(确保新数据一定被收录)
+    run("build_viewer.py")
+    run("make_report.py")
+    if publish:
+        run("build_publish.py")
+
     print("\n" + "=" * 52)
-    print(" 刷新完成")
+    print(" 刷新完成" + ("（已同步发布目录）" if publish else ""))
     print("=" * 52)
 
 
