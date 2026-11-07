@@ -54,4 +54,18 @@ footer{margin-top:34px;color:#6b7280;font-size:11px}
 </div>
 
 <footer>Generated 2026-11-07 19:10 · 静态看板，无追踪、无后端、无 Cookie</footer>
-</div></body></html>
+</div>
+<script>
+/* 公开分享链接的 sharecode 透传：访客从首页点进子页面时保留授权参数。
+   本地离线打开时无 sharecode，此脚本不生效。 */
+(function(){
+  var sc = new URLSearchParams(location.search).get('sharecode');
+  if(!sc) return;
+  Array.prototype.forEach.call(document.querySelectorAll('a[href]'), function(a){
+    var h = a.getAttribute('href');
+    if(!h || /^https?:|^#|^mailto:/.test(h)) return;
+    a.setAttribute('href', h + (h.indexOf('?')>=0?'&':'?') + 'sharecode=' + encodeURIComponent(sc));
+  });
+})();
+</script>
+</body></html>
