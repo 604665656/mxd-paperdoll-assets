@@ -1,0 +1,768 @@
+<!doctype html>
+<html lang="zh-CN" class="tw-h-full">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="keywords" content="冒险岛数据库,冒险岛资料站,冒险岛装备ID查询,冒险岛怪物掉落,冒险岛地图工具,冒险岛纸娃娃,外观查询,发型,脸型查询,楓之谷数据库,冒险岛怀旧服数据库,079数据库">
+    <meta name="description" content="冒险岛小册子是由DVG.cn整理的关于网络游戏《冒险岛》online的一个资料站，为冒险岛玩家提供详细的装备数据，道具掉落数据，技能模拟器，综合职业攻略，历代版本更新，纸娃娃模拟器工具内容等实用资料，数据版本包括CMS(国服)、079/083/143怀旧服、TMS(台服)、GMS(国际)、KMS(韩服)。">
+    <title>纸娃娃4.0 - 冒险岛小册子</title>
+    <link rel="icon" href="/public/favicon.ico?v=1780313566">
+    <link rel="shortcut icon" href="/public/favicon.ico?v=1780313566">
+    <script>
+        (function () {
+            var defaultTheme = "light";
+            var defaultDarkBg = "#282828";
+            var savedTheme = localStorage.getItem('xcz-theme') || localStorage.getItem('mxd-theme');
+            var theme = savedTheme || defaultTheme;
+            var root = document.documentElement;
+            if (theme !== 'dark' && theme !== 'light') {
+                theme = defaultTheme === 'dark' ? 'dark' : 'light';
+            }
+            localStorage.setItem('xcz-theme', theme);
+            root.dataset.theme = theme;
+            root.classList.toggle('dark', theme === 'dark');
+            root.classList.toggle('tw-dark', theme === 'dark');
+
+            if (!/^#(?:[0-9a-f]{3}|[0-9a-f]{6})$/i.test(defaultDarkBg)) {
+                defaultDarkBg = '#282828';
+            }
+            window.MXD_DARK_BG_DEFAULT = defaultDarkBg;
+
+            var savedDarkBg = localStorage.getItem('mxd-dark-bg') || '';
+            var darkBg = String(savedDarkBg).toLowerCase() === '#181818' ? '' : savedDarkBg;
+            darkBg = darkBg || defaultDarkBg;
+            if (!/^#(?:[0-9a-f]{3}|[0-9a-f]{6})$/i.test(darkBg)) {
+                darkBg = defaultDarkBg;
+            }
+            root.style.setProperty('--mxd-dark-bg', darkBg);
+        })();
+    </script>
+    <script>
+        (function () {
+            var valid = ['CMS', '079', '083', '143', 'TMS', 'GMS', 'KMS'];
+            var saved = '';
+            var cookie = '';
+            var match = document.cookie.match(/(?:^|;\s*)USER_REGION=([^;]+)/);
+
+            try {
+                var dataset = JSON.parse(localStorage.getItem('mxd-current-dataset') || '{}');
+                saved = String(dataset.region || localStorage.getItem('mxd-region') || '').toUpperCase();
+            } catch (error) {
+                saved = String(localStorage.getItem('mxd-region') || '').toUpperCase();
+            }
+
+            cookie = match ? decodeURIComponent(match[1]).toUpperCase() : '';
+            if (valid.indexOf(saved) !== -1 && saved !== cookie) {
+                document.cookie = 'USER_REGION=' + encodeURIComponent(saved) + '; path=/; max-age=31536000; samesite=lax';
+                window.location.reload();
+            }
+        })();
+    </script>
+    <link rel="stylesheet" href="/public/assets/css/app.css?v=1785056752">
+    <link rel="stylesheet" href="/public/assets/css/booklet.css?v=1792744504">
+    <link rel="stylesheet" href="/public/assets/css/member-ui.css?v=1794016125">
+    <script>
+    window.BOOKLET_SECURE_API = {"enabled":true,"forceOnline":true,"requireSignature":true,"trialParam":"_secure","legacyFallback":true,"legacyParam":"_legacy","wasmUrl":"/public/assets/wasm/encryptor/encryptor.js?v=1780313555"};
+    </script>
+    <script src="/public/assets/js/secure-api.js?v=1788311169"></script>
+    <script src="/public/assets/js/item-tip.js?v=1780473323"></script>
+</head>
+<body class="tw-min-h-full">
+<div class="side-backdrop" data-side-backdrop></div>
+<aside class="side-panel" data-side-panel>
+    <div class="tw-flex tw-items-center tw-justify-between tw-border-b tw-border-line-light tw-px-5 tw-py-2 tw-py-2.5 dark:tw-border-line-dark">
+        <div class="tw-text-lg tw-font-semibold">冒险岛小册子</div>
+        <button type="button" class="icon-btn tw-h-8 tw-w-8" data-side-close>
+            <span class="tw-icon-[ph--x-bold] tw-h-4.5 tw-w-4.5"></span>
+        </button>
+    </div>
+
+    <div class="tw-flex tw-items-center tw-gap-2 tw-px-5 tw-py-2 tw-mt-2">
+        <button type="button" class="icon-btn tw-bg-slateblue dark:tw-bg-slate-800" data-theme-toggle>
+            <span class="tw-icon-[ph--moon-fill] tw-h-5 tw-w-5 dark:tw-hidden"></span>
+            <span class="tw-icon-[ph--sun-fill] tw-hidden tw-h-5 tw-w-5 dark:tw-inline-block"></span>
+        </button>
+                        <div class="tw-relative" data-dropdown data-dropdown-mode="click">
+            <button type="button" class="icon-btn tw-relative tw-bg-slateblue dark:tw-bg-slate-800" data-dropdown-trigger aria-expanded="false">
+                <span class="tw-icon-[ph--folders-fill] tw-h-5 tw-w-5"></span>
+                <span class="top-badge" data-region-current-badge>CMS</span>
+            </button>
+            <div class="nav-drop dropdown-panel  control-menu tw-left-0 tw-right-auto" data-dropdown-panel><a href="javascript:void(0)" data-region-option="1" data-region="CMS" data-region-label="CMS-229" data-dataset-key="cms-229" data-dataset-label="CMS-229" data-basewz-suffix="" data-db-mxd-version-field="v_cms" class="nav-drop-item"><span class="tw-flex tw-min-w-0 tw-items-center tw-gap-2"><span class="nav-drop-line">CMS-229</span></span><span class="tw-flex tw-shrink-0 tw-items-center tw-gap-2"><span class="tag-blue" title="当前" aria-label="当前"><span class="tw-icon-[mdi--check-bold]"></span></span></span></a><a href="javascript:void(0)" data-region-option="1" data-region="TMS" data-region-label="TMS-283" data-dataset-key="tms-283" data-dataset-label="TMS-283" data-basewz-suffix="_tms" data-db-mxd-version-field="v_tms" class="nav-drop-item"><span class="tw-flex tw-min-w-0 tw-items-center tw-gap-2"><span class="nav-drop-line">TMS-283</span></span><span class="tw-flex tw-shrink-0 tw-items-center tw-gap-2"></span></a><a href="javascript:void(0)" data-region-option="1" data-region="GMS" data-region-label="GMS-271" data-dataset-key="gms-271" data-dataset-label="GMS-271" data-basewz-suffix="_gms" data-db-mxd-version-field="v_gms" class="nav-drop-item"><span class="tw-flex tw-min-w-0 tw-items-center tw-gap-2"><span class="nav-drop-line">GMS-271</span></span><span class="tw-flex tw-shrink-0 tw-items-center tw-gap-2"></span></a><a href="javascript:void(0)" data-region-option="1" data-region="KMS" data-region-label="KMS-416" data-dataset-key="kms-416" data-dataset-label="KMS-416" data-basewz-suffix="_kms" data-db-mxd-version-field="v_kms" class="nav-drop-item"><span class="tw-flex tw-min-w-0 tw-items-center tw-gap-2"><span class="nav-drop-line">KMS-416</span></span><span class="tw-flex tw-shrink-0 tw-items-center tw-gap-2"></span></a><a href="https://mxdc.dvg.cn/" target="_blank" rel="noopener noreferrer" class="nav-drop-item"><span class="tw-flex tw-min-w-0 tw-items-center tw-gap-2"><span class="nav-drop-line">国服怀旧</span></span><span class="tw-flex tw-shrink-0 tw-items-center tw-gap-2"><span class="tw-icon-[fluent--open-20-regular] tw-h-4 tw-w-4 tw-text-text-soft dark:tw-text-text-darksoft" title="前往独立站点" aria-label="前往独立站点"></span></span></a><a href="https://mxdgcw.dvg.cn/" target="_blank" rel="noopener noreferrer" class="nav-drop-item"><span class="tw-flex tw-min-w-0 tw-items-center tw-gap-2"><span class="nav-drop-line">国际怀旧</span></span><span class="tw-flex tw-shrink-0 tw-items-center tw-gap-2"><span class="tw-icon-[fluent--open-20-regular] tw-h-4 tw-w-4 tw-text-text-soft dark:tw-text-text-darksoft" title="前往独立站点" aria-label="前往独立站点"></span></span></a><a href="javascript:void(0)" data-region-option="1" data-region="079" data-region-label="怀旧-079" data-dataset-key="cms-079" data-dataset-label="怀旧-079" data-basewz-suffix="_079" data-db-mxd-version-field="v_079" class="nav-drop-item"><span class="tw-flex tw-min-w-0 tw-items-center tw-gap-2"><span class="nav-drop-line">怀旧-079</span></span><span class="tw-flex tw-shrink-0 tw-items-center tw-gap-2"></span></a><a href="javascript:void(0)" data-region-option="1" data-region="083" data-region-label="怀旧-083" data-dataset-key="cms-083" data-dataset-label="怀旧-083" data-basewz-suffix="_083" data-db-mxd-version-field="v_083" class="nav-drop-item"><span class="tw-flex tw-min-w-0 tw-items-center tw-gap-2"><span class="nav-drop-line">怀旧-083</span></span><span class="tw-flex tw-shrink-0 tw-items-center tw-gap-2"></span></a><a href="javascript:void(0)" data-region-option="1" data-region="143" data-region-label="怀旧-143" data-dataset-key="cms-143" data-dataset-label="怀旧-143" data-basewz-suffix="_143" data-db-mxd-version-field="v_143" class="nav-drop-item"><span class="tw-flex tw-min-w-0 tw-items-center tw-gap-2"><span class="nav-drop-line">怀旧-143</span></span><span class="tw-flex tw-shrink-0 tw-items-center tw-gap-2"></span></a></div>        </div>
+                    </div>
+
+    <div class="tw-flex-1 tw-overflow-y-auto tw-px-4 tw-pb-6">
+                        <div class="tw-mb-1">
+                        <a href="/" class="side-link">
+                <span class="tw-flex tw-items-center tw-gap-3">
+                    <span class="tw-icon-[mdi--book-open-page-variant-outline] tw-h-5 tw-w-5 tw-text-brand-500"></span>
+                    <span>首页</span>
+                </span>
+            </a>
+                    </div>
+                        <div class="tw-mb-1">
+                        <div data-accordion>
+                <button type="button" class="side-link tw-w-full" data-side-section data-side-target="#side-nav-1" aria-expanded="false">
+                    <span class="tw-flex tw-items-center tw-gap-3">
+                        <span class="tw-icon-[mdi--cube-outline] tw-h-5 tw-w-5 tw-text-brand-500"></span>
+                        <span>数据库</span>
+                    </span>
+                    <span class="tw-icon-[ph--caret-down-bold] tw-h-4 tw-w-4"></span>
+                </button>
+                <div class="tw-hidden tw-py-2" id="side-nav-1">
+                    <div class="side-drop-stack side-drop-rail tw-grid tw-grid-cols-2 tw-gap-1"><a href="/item_list.php" class="side-child-link tw-justify-start tw-gap-2 tw-px-2.5"><span class="tw-icon-[mdi--package-variant-closed] tw-h-4 tw-w-4 tw-shrink-0 tw-text-brand-500"></span><span class="nav-drop-line">道具图鉴</span></a><a href="/appearance_list.php" class="side-child-link tw-justify-start tw-gap-2 tw-px-2.5"><span class="tw-icon-[mdi--hanger] tw-h-4 tw-w-4 tw-shrink-0 tw-text-brand-500"></span><span class="nav-drop-line">外观图鉴</span></a><a href="/pet_list.php" class="side-child-link tw-justify-start tw-gap-2 tw-px-2.5"><span class="tw-icon-[mdi--paw] tw-h-4 tw-w-4 tw-shrink-0 tw-text-brand-500"></span><span class="nav-drop-line">宠物图鉴</span></a><a href="/set_list.php" class="side-child-link tw-justify-start tw-gap-2 tw-px-2.5"><span class="tw-icon-[mdi--layers-triple-outline] tw-h-4 tw-w-4 tw-shrink-0 tw-text-brand-500"></span><span class="nav-drop-line">套装大全</span></a><a href="/mob_list.php" class="side-child-link tw-justify-start tw-gap-2 tw-px-2.5"><span class="tw-icon-[mdi--snail] tw-h-4 tw-w-4 tw-shrink-0 tw-text-brand-500"></span><span class="nav-drop-line">怪物图鉴</span></a><a href="/npc_list.php" class="side-child-link tw-justify-start tw-gap-2 tw-px-2.5"><span class="tw-icon-[mdi--account-outline] tw-h-4 tw-w-4 tw-shrink-0 tw-text-brand-500"></span><span class="nav-drop-line">NPC 图鉴</span></a><a href="/quest_list.php" class="side-child-link tw-justify-start tw-gap-2 tw-px-2.5"><span class="tw-icon-[mdi--clipboard-text-outline] tw-h-4 tw-w-4 tw-shrink-0 tw-text-brand-500"></span><span class="nav-drop-line">任务图鉴</span></a><a href="/map_list.php" class="side-child-link tw-justify-start tw-gap-2 tw-px-2.5"><span class="tw-icon-[mdi--map-outline] tw-h-4 tw-w-4 tw-shrink-0 tw-text-brand-500"></span><span class="nav-drop-line">地图图鉴</span></a><a href="/skill_list.php" class="side-child-link tw-justify-start tw-gap-2 tw-px-2.5"><span class="tw-icon-[mdi--magic-staff] tw-h-4 tw-w-4 tw-shrink-0 tw-text-brand-500"></span><span class="nav-drop-line">技能图鉴</span></a><a href="/tools/link/" class="side-child-link tw-justify-start tw-gap-2 tw-px-2.5"><span class="tw-icon-[mdi--link-variant] tw-h-4 tw-w-4 tw-shrink-0 tw-text-brand-500"></span><span class="nav-drop-line">Link 查询</span></a><a href="/item_make_list.php" class="side-child-link tw-justify-start tw-gap-2 tw-px-2.5"><span class="tw-icon-[mdi--hammer-wrench] tw-h-4 tw-w-4 tw-shrink-0 tw-text-brand-500"></span><span class="nav-drop-line">制作图鉴</span></a><a href="/recipe_list.php" class="side-child-link tw-justify-start tw-gap-2 tw-px-2.5"><span class="tw-icon-[mdi--notebook-outline] tw-h-4 tw-w-4 tw-shrink-0 tw-text-brand-500"></span><span class="nav-drop-line">配方图鉴</span></a><a href="/cash_shop_list.php" class="side-child-link tw-justify-start tw-gap-2 tw-px-2.5"><span class="tw-icon-[mdi--cart-outline] tw-h-4 tw-w-4 tw-shrink-0 tw-text-brand-500"></span><span class="nav-drop-line">商城图鉴</span></a></div>                </div>
+            </div>
+                    </div>
+                        <div class="tw-mb-1">
+                        <div data-accordion>
+                <button type="button" class="side-link tw-w-full" data-side-section data-side-target="#side-nav-2" aria-expanded="false">
+                    <span class="tw-flex tw-items-center tw-gap-3">
+                        <span class="tw-icon-[mdi--tshirt-crew] tw-h-5 tw-w-5 tw-text-brand-500"></span>
+                        <span>纸娃娃</span>
+                    </span>
+                    <span class="tw-icon-[ph--caret-down-bold] tw-h-4 tw-w-4"></span>
+                </button>
+                <div class="tw-hidden tw-py-2" id="side-nav-2">
+                    <div class="side-drop-stack side-drop-rail"><a href="/zhiwawa_v4/" class="side-child-link tw-justify-start tw-gap-2 tw-px-2.5"><span class="tw-icon-[mdi--creation-outline] tw-h-4 tw-w-4 tw-shrink-0 tw-text-brand-500"></span><span class="nav-drop-line">小册子4.0版</span><span class="tag-blue">New</span></a><a href="/zhiwawa_v2/" class="side-child-link tw-justify-start tw-gap-2 tw-px-2.5"><span class="tw-icon-[mdi--account-box-outline] tw-h-4 tw-w-4 tw-shrink-0 tw-text-brand-500"></span><span class="nav-drop-line">小册子2.0版</span></a><a href="/zww_cases.php" class="side-child-link tw-justify-start tw-gap-2 tw-px-2.5"><span class="tw-icon-[mdi--image-multiple-outline] tw-h-4 tw-w-4 tw-shrink-0 tw-text-brand-500"></span><span class="nav-drop-line">搭配方案中心</span></a><a href="/zww_designers.php" class="side-child-link tw-justify-start tw-gap-2 tw-px-2.5"><span class="tw-icon-[mdi--account-star-outline] tw-h-4 tw-w-4 tw-shrink-0 tw-text-brand-500"></span><span class="nav-drop-line">设计师</span></a><a href="/zhiwawa_skin/" class="side-child-link tw-justify-start tw-gap-2 tw-px-2.5"><span class="tw-icon-[mdi--palette-outline] tw-h-4 tw-w-4 tw-shrink-0 tw-text-brand-500"></span><span class="nav-drop-line">皮肤市场</span><span class="tag-blue">New</span></a><a href="/zhiwawa_skin/manage.php" class="side-child-link tw-justify-start tw-gap-2 tw-px-2.5"><span class="tw-icon-[mdi--upload-outline] tw-h-4 tw-w-4 tw-shrink-0 tw-text-brand-500"></span><span class="nav-drop-line">皮肤管理</span></a><a href="/tools/zww-maketools/" class="side-child-link tw-justify-start tw-gap-2 tw-px-2.5"><span class="tw-icon-[mdi--tshirt-crew-outline] tw-h-4 tw-w-4 tw-shrink-0 tw-text-brand-500"></span><span class="nav-drop-line">皮肤制作工具</span></a><a href="/zww_case_rank.php" class="side-child-link tw-justify-start tw-gap-2 tw-px-2.5"><span class="case-rank-hero-icon tw-h-4 tw-w-4 tw-shrink-0 tw-text-brand-500"></span><span class="nav-drop-line">搭配排行</span><span class="tag-blue">New</span></a><a href="/tools/rank/" class="side-child-link tw-justify-start tw-gap-2 tw-px-2.5"><span class="tw-icon-[mdi--fire] tw-h-4 tw-w-4 tw-shrink-0 tw-text-brand-500"></span><span class="nav-drop-line">热门单品排行</span><span class="tag-red">Hot</span></a><a href="/tools/demage-skin/" class="side-child-link tw-justify-start tw-gap-2 tw-px-2.5"><span class="tw-icon-[mdi--sword-cross] tw-h-4 tw-w-4 tw-shrink-0 tw-text-brand-500"></span><span class="nav-drop-line">伤害皮肤模拟器</span><span class="tag-blue">New</span></a><a href="/zhiwawa/" class="side-child-link tw-justify-start tw-gap-2 tw-px-2.5"><span class="tw-icon-[mdi--package-variant-closed] tw-h-4 tw-w-4 tw-shrink-0 tw-text-brand-500"></span><span class="nav-drop-line">纸娃娃 旧版 Maples.IM</span></a></div>                </div>
+            </div>
+                    </div>
+                        <div class="tw-mb-1">
+                        <div data-accordion>
+                <button type="button" class="side-link tw-w-full" data-side-section data-side-target="#side-nav-3" aria-expanded="false">
+                    <span class="tw-flex tw-items-center tw-gap-3">
+                        <span class="tw-icon-[mdi--target-account] tw-h-5 tw-w-5 tw-text-brand-500"></span>
+                        <span>工具</span>
+                    </span>
+                    <span class="tw-icon-[ph--caret-down-bold] tw-h-4 tw-w-4"></span>
+                </button>
+                <div class="tw-hidden tw-py-2" id="side-nav-3">
+                    <div class="side-drop-stack side-drop-rail"><a href="/search.php" class="side-child-link tw-justify-start tw-gap-2 tw-px-2.5"><span class="tw-icon-[mdi--magnify] tw-h-4 tw-w-4 tw-shrink-0 tw-text-brand-500"></span><span class="nav-drop-line">全局搜索</span></a><a href="/tools/price-trend/" class="side-child-link tw-justify-start tw-gap-2 tw-px-2.5"><span class="tw-icon-[mdi--chart-timeline-variant] tw-h-4 tw-w-4 tw-shrink-0 tw-text-brand-500"></span><span class="nav-drop-line">游戏币价格走势</span></a><a href="/tools/maptools/" class="side-child-link tw-justify-start tw-gap-2 tw-px-2.5"><span class="tw-icon-[mdi--map-outline] tw-h-4 tw-w-4 tw-shrink-0 tw-text-brand-500"></span><span class="nav-drop-line">地图工具</span></a><a href="/tools/skilltools/" class="side-child-link tw-justify-start tw-gap-2 tw-px-2.5"><span class="tw-icon-[mdi--book-search-outline] tw-h-4 tw-w-4 tw-shrink-0 tw-text-brand-500"></span><span class="nav-drop-line">技能查询</span></a><a href="/tools/link/" class="side-child-link tw-justify-start tw-gap-2 tw-px-2.5"><span class="tw-icon-[mdi--link-variant] tw-h-4 tw-w-4 tw-shrink-0 tw-text-brand-500"></span><span class="nav-drop-line">Link 查询</span><span class="tag-blue">New</span></a><a href="/tools/demage-skin/" class="side-child-link tw-justify-start tw-gap-2 tw-px-2.5"><span class="tw-icon-[mdi--sword-cross] tw-h-4 tw-w-4 tw-shrink-0 tw-text-brand-500"></span><span class="nav-drop-line">伤害皮肤模拟器</span></a><a href="/tools/drops/" class="side-child-link tw-justify-start tw-gap-2 tw-px-2.5"><span class="tw-icon-[mdi--treasure-chest-outline] tw-h-4 tw-w-4 tw-shrink-0 tw-text-brand-500"></span><span class="nav-drop-line">掉落查询</span></a><a href="/tools/rank/" class="side-child-link tw-justify-start tw-gap-2 tw-px-2.5"><span class="tw-icon-[mdi--fire] tw-h-4 tw-w-4 tw-shrink-0 tw-text-brand-500"></span><span class="nav-drop-line">热门外观排行</span></a><a href="/tools/experience/" class="side-child-link tw-justify-start tw-gap-2 tw-px-2.5"><span class="tw-icon-[mdi--clock-outline] tw-h-4 tw-w-4 tw-shrink-0 tw-text-brand-500"></span><span class="nav-drop-line">经验计算器-怀旧</span></a><a href="/tools/accuracy/" class="side-child-link tw-justify-start tw-gap-2 tw-px-2.5"><span class="tw-icon-[mdi--target-account] tw-h-4 tw-w-4 tw-shrink-0 tw-text-brand-500"></span><span class="nav-drop-line">命中率计算器</span></a><a href="/tools/hyperstats/" class="side-child-link tw-justify-start tw-gap-2 tw-px-2.5"><span class="tw-icon-[mdi--calculator-variant-outline] tw-h-4 tw-w-4 tw-shrink-0 tw-text-brand-500"></span><span class="nav-drop-line">超级属性计算器</span><span class="tag-blue">New</span></a><a href="/tools/legion-solver/" class="side-child-link tw-justify-start tw-gap-2 tw-px-2.5"><span class="tw-icon-[mdi--view-grid-outline] tw-h-4 tw-w-4 tw-shrink-0 tw-text-brand-500"></span><span class="nav-drop-line">联盟摆放工具</span></a><a href="/nexon/tms/ranking.php" class="side-child-link tw-justify-start tw-gap-2 tw-px-2.5"><span class="tw-icon-[icon-park-outline--gold-medal] tw-h-4 tw-w-4 tw-shrink-0 tw-text-brand-500"></span><span class="nav-drop-line">枫之谷TMS角色排行与查询</span></a><a href="/nexon/kms/ranking.php" class="side-child-link tw-justify-start tw-gap-2 tw-px-2.5"><span class="tw-icon-[icon-park-outline--ranking] tw-h-4 tw-w-4 tw-shrink-0 tw-text-brand-500"></span><span class="nav-drop-line">冒险岛KMS角色排行与查询</span><span class="tag-blue">New</span></a></div>                </div>
+            </div>
+                    </div>
+                        <div class="tw-mb-1">
+                        <a href="/item_list.php" class="side-link">
+                <span class="tw-flex tw-items-center tw-gap-3">
+                    <span class="tw-icon-[mdi--package-variant-closed] tw-h-5 tw-w-5 tw-text-brand-500"></span>
+                    <span>道具</span>
+                </span>
+            </a>
+                    </div>
+                        <div class="tw-mb-1">
+                        <div data-accordion>
+                <button type="button" class="side-link tw-w-full" data-side-section data-side-target="#side-nav-5" aria-expanded="false">
+                    <span class="tw-flex tw-items-center tw-gap-3">
+                        <span class="tw-icon-[mdi--hanger] tw-h-5 tw-w-5 tw-text-brand-500"></span>
+                        <span>外观</span>
+                    </span>
+                    <span class="tw-icon-[ph--caret-down-bold] tw-h-4 tw-w-4"></span>
+                </button>
+                <div class="tw-hidden tw-py-2" id="side-nav-5">
+                    <div class="side-drop-stack side-drop-rail"><a href="/appearance_list.php?category=Skin" class="side-child-link"><span class="tw-flex tw-min-w-0 tw-items-center tw-gap-2"><span class="nav-drop-list-icon"><span class="tw-icon-[fluent--emoji-sparkle-24-filled]"></span></span><span class="nav-drop-line">肤色</span></span><span class="tw-flex tw-shrink-0 tw-items-center tw-gap-2"></span></a><a href="/appearance_list.php?category=Hair" class="side-child-link"><span class="tw-flex tw-min-w-0 tw-items-center tw-gap-2"><span class="nav-drop-list-icon"><span class="tw-icon-[mdi--face-man-shimmer-outline]"></span></span><span class="nav-drop-line">发型</span></span><span class="tw-flex tw-shrink-0 tw-items-center tw-gap-2"></span></a><a href="/appearance_list.php?category=Face" class="side-child-link"><span class="tw-flex tw-min-w-0 tw-items-center tw-gap-2"><span class="nav-drop-list-icon"><span class="tw-icon-[mdi--emoticon-outline]"></span></span><span class="nav-drop-line">脸型</span></span><span class="tw-flex tw-shrink-0 tw-items-center tw-gap-2"></span></a><a href="/appearance_list.php?category=Chair" class="side-child-link"><span class="tw-flex tw-min-w-0 tw-items-center tw-gap-2"><span class="nav-drop-list-icon"><span class="tw-icon-[mdi--seat-outline]"></span></span><span class="nav-drop-line">椅子</span></span><span class="tw-flex tw-shrink-0 tw-items-center tw-gap-2"></span></a><a href="/appearance_list.php" class="side-child-link"><span class="tw-flex tw-min-w-0 tw-items-center tw-gap-2"><span class="nav-drop-list-icon"><span class="tw-icon-[fluent--star-emphasis-24-filled]"></span></span><span class="nav-drop-line">其他</span></span><span class="tw-flex tw-shrink-0 tw-items-center tw-gap-2"></span></a></div>                </div>
+            </div>
+                    </div>
+                        <div class="tw-mb-1">
+                        <a href="/mob_list.php" class="side-link">
+                <span class="tw-flex tw-items-center tw-gap-3">
+                    <span class="tw-icon-[mdi--snail] tw-h-5 tw-w-5 tw-text-brand-500"></span>
+                    <span>怪物</span>
+                </span>
+            </a>
+                    </div>
+                        <div class="tw-mb-1">
+                        <a href="/tools/maptools/" class="side-link">
+                <span class="tw-flex tw-items-center tw-gap-3">
+                    <span class="tw-icon-[mdi--map-outline] tw-h-5 tw-w-5 tw-text-brand-500"></span>
+                    <span>地图</span>
+                </span>
+            </a>
+                    </div>
+                        <div class="tw-mb-1">
+                        <a href="/tools/skilltools/" class="side-link">
+                <span class="tw-flex tw-items-center tw-gap-3">
+                    <span class="tw-icon-[mdi--book-search-outline] tw-h-5 tw-w-5 tw-text-brand-500"></span>
+                    <span>技能</span>
+                </span>
+            </a>
+                    </div>
+                        <div class="tw-mb-1">
+                        <a href="/fankui.php" class="side-link">
+                <span class="tw-flex tw-items-center tw-gap-3">
+                    <span class="tw-icon-[ph--pencil-line-fill] tw-h-5 tw-w-5 tw-text-brand-500"></span>
+                    <span>反馈</span>
+                </span>
+            </a>
+                    </div>
+                        <div class="tw-mb-1">
+                        <div data-accordion>
+                <button type="button" class="side-link tw-w-full" data-side-section data-side-target="#side-nav-10" aria-expanded="false">
+                    <span class="tw-flex tw-items-center tw-gap-3">
+                        <span class="tw-icon-[fluent--games-20-filled] tw-h-5 tw-w-5 tw-text-brand-500"></span>
+                        <span>版本专区</span>
+                    </span>
+                    <span class="tw-icon-[ph--caret-down-bold] tw-h-4 tw-w-4"></span>
+                </button>
+                <div class="tw-hidden tw-py-2" id="side-nav-10">
+                    <div class="side-drop-stack side-drop-rail"><a href="https://mxdc.dvg.cn/" target="_blank" rel="noopener noreferrer" class="side-child-link tw-justify-start tw-gap-2 tw-px-2.5"><span class="tw-icon-[fluent--games-24-regular] tw-h-4 tw-w-4 tw-shrink-0 tw-text-brand-500"></span><span class="nav-drop-line">国服怀旧专版</span><span class="tag-red">HOT</span></a><a href="https://mxd079.dvg.cn/" target="_blank" rel="noopener noreferrer" class="side-child-link tw-justify-start tw-gap-2 tw-px-2.5"><span class="tw-icon-[fluent--calendar-clock-24-regular] tw-h-4 tw-w-4 tw-shrink-0 tw-text-brand-500"></span><span class="nav-drop-line">079专版</span><span class="tag-red">HOT</span></a><a href="https://mxdgcw.dvg.cn/" target="_blank" rel="noopener noreferrer" class="side-child-link tw-justify-start tw-gap-2 tw-px-2.5"><span class="tw-icon-[fluent--globe-24-regular] tw-h-4 tw-w-4 tw-shrink-0 tw-text-brand-500"></span><span class="nav-drop-line">国际怀旧专版</span></a><a href="/old.php" class="side-child-link tw-justify-start tw-gap-2 tw-px-2.5"><span class="tw-icon-[fluent--book-open-24-regular] tw-h-4 tw-w-4 tw-shrink-0 tw-text-brand-500"></span><span class="nav-drop-line">旧版小册子</span></a></div>                </div>
+            </div>
+                    </div>
+            </div>
+</aside>
+
+<header id="header-box" class="nav-surface nav-surface-ember tw-sticky tw-top-0 tw-z-30">
+    <div class="nav-shell">
+        <div class="tw-flex tw-h-[64px] tw-items-center tw-justify-between tw-gap-3">
+            <div class="tw-flex tw-min-w-0 tw-items-center tw-gap-2">
+                <button type="button" class="icon-btn" data-side-open>
+                    <span class="tw-icon-[ph--list-bold] tw-h-6 tw-w-6"></span>
+                </button>
+                <a href="/" class="tw-flex tw-min-w-0 tw-items-center tw-gap-2">
+                                            <img src="/public/assets/images/brand/logo_lit.png?v=1780313561" alt="冒险岛小册子" class="tw-h-8 tw-w-8 tw-shrink-0 tw-object-contain">
+                                        <span class="nav-brand-title tw-max-w-[148px] tw-truncate tw-text-[15px] tw-font-extrabold tw-tracking-[-0.01em] sm:tw-max-w-[180px] md:tw-max-w-none md:tw-text-[17px]">冒险岛小册子</span>
+                </a>
+            </div>
+
+            <nav class="nav-desktop-menu tw-flex-1 tw-items-center tw-justify-center tw-gap-1.5">
+                                                <div class="tw-relative dropdown-anchor" data-dropdown data-dropdown-mode="hover">
+                    <a href="/" class="nav-link " >
+                        <span class="tw-icon-[mdi--book-open-page-variant-outline] tw-h-5 tw-w-5 tw-text-[20px]"></span>
+                        <span>首页</span>
+                                            </a>
+                                    </div>
+                                                <div class="tw-relative dropdown-anchor" data-dropdown data-dropdown-mode="hover">
+                    <a href="/item_list.php" class="nav-link " data-dropdown-trigger aria-expanded="false">
+                        <span class="tw-icon-[mdi--cube-outline] tw-h-5 tw-w-5 tw-text-[20px]"></span>
+                        <span>数据库</span>
+                                                <span class="tw-icon-[ph--caret-down-bold] tw-h-4 tw-w-4 tw-text-[16px]"></span>
+                                            </a>
+                                        <div class="nav-drop dropdown-panel database-drop-panel" data-dropdown-panel><div class="database-drop-grid"><a href="/item_list.php" class="database-drop-card"><span class="database-drop-icon"><span class="tw-icon-[mdi--package-variant-closed]"></span></span><span class="database-drop-copy"><span class="database-drop-title">道具图鉴</span><span class="database-drop-desc">装备、消耗与现金道具</span></span></a><a href="/appearance_list.php" class="database-drop-card"><span class="database-drop-icon"><span class="tw-icon-[mdi--hanger]"></span></span><span class="database-drop-copy"><span class="database-drop-title">外观图鉴</span><span class="database-drop-desc">发型、脸型与装扮外观</span></span></a><a href="/pet_list.php" class="database-drop-card"><span class="database-drop-icon"><span class="tw-icon-[mdi--paw]"></span></span><span class="database-drop-copy"><span class="database-drop-title">宠物图鉴</span><span class="database-drop-desc">宠物预览、技能与分类筛选</span></span></a><a href="/set_list.php" class="database-drop-card"><span class="database-drop-icon"><span class="tw-icon-[mdi--layers-triple-outline]"></span></span><span class="database-drop-copy"><span class="database-drop-title">套装大全</span><span class="database-drop-desc">套装部件与效果</span></span></a><a href="/mob_list.php" class="database-drop-card"><span class="database-drop-icon"><span class="tw-icon-[mdi--snail]"></span></span><span class="database-drop-copy"><span class="database-drop-title">怪物图鉴</span><span class="database-drop-desc">怪物属性与掉落</span></span></a><a href="/npc_list.php" class="database-drop-card"><span class="database-drop-icon"><span class="tw-icon-[mdi--account-outline]"></span></span><span class="database-drop-copy"><span class="database-drop-title">NPC 图鉴</span><span class="database-drop-desc">NPC 位置与资料</span></span></a><a href="/quest_list.php" class="database-drop-card"><span class="database-drop-icon"><span class="tw-icon-[mdi--clipboard-text-outline]"></span></span><span class="database-drop-copy"><span class="database-drop-title">任务图鉴</span><span class="database-drop-desc">任务流程与奖励</span></span></a><a href="/map_list.php" class="database-drop-card"><span class="database-drop-icon"><span class="tw-icon-[mdi--map-outline]"></span></span><span class="database-drop-copy"><span class="database-drop-title">地图图鉴</span><span class="database-drop-desc">地图资料与关联</span></span></a><a href="/skill_list.php" class="database-drop-card"><span class="database-drop-icon"><span class="tw-icon-[mdi--magic-staff]"></span></span><span class="database-drop-copy"><span class="database-drop-title">技能图鉴</span><span class="database-drop-desc">技能数据与说明</span></span></a><a href="/tools/link/" class="database-drop-card"><span class="database-drop-icon"><span class="tw-icon-[mdi--link-variant]"></span></span><span class="database-drop-copy"><span class="database-drop-title">Link 查询</span><span class="database-drop-desc">正式服全职业 Link 数据</span></span></a><a href="/item_make_list.php" class="database-drop-card"><span class="database-drop-icon"><span class="tw-icon-[mdi--hammer-wrench]"></span></span><span class="database-drop-copy"><span class="database-drop-title">制作图鉴</span><span class="database-drop-desc">制作材料与等级</span></span></a><a href="/recipe_list.php" class="database-drop-card"><span class="database-drop-icon"><span class="tw-icon-[mdi--notebook-outline]"></span></span><span class="database-drop-copy"><span class="database-drop-title">配方图鉴</span><span class="database-drop-desc">配方来源与产物</span></span></a><a href="/cash_shop_list.php" class="database-drop-card"><span class="database-drop-icon"><span class="tw-icon-[mdi--cart-outline]"></span></span><span class="database-drop-copy"><span class="database-drop-title">商城图鉴</span><span class="database-drop-desc">商城与现金物品</span></span></a></div></div>                                    </div>
+                                                <div class="tw-relative dropdown-anchor" data-dropdown data-dropdown-mode="hover">
+                    <a href="/zhiwawa_v4/" class="nav-link nav-link-active" data-dropdown-trigger aria-expanded="false">
+                        <span class="tw-icon-[mdi--tshirt-crew] tw-h-5 tw-w-5 tw-text-[20px]"></span>
+                        <span>纸娃娃</span>
+                                                <span class="tw-icon-[ph--caret-down-bold] tw-h-4 tw-w-4 tw-text-[16px]"></span>
+                                            </a>
+                                        <div class="nav-drop dropdown-panel tools-drop-panel" data-dropdown-panel><div class="tools-drop-grid"><a href="/zhiwawa_v4/" class="tools-drop-card"><span class="tools-drop-icon"><span class="tw-icon-[mdi--creation-outline]"></span></span><span class="tools-drop-copy"><span class="tools-drop-title">小册子4.0版</span><span class="tools-drop-desc">新版纸娃娃搭配与方案编辑。</span></span><span class="tag-blue">New</span></a><a href="/zhiwawa_v2/" class="tools-drop-card"><span class="tools-drop-icon"><span class="tw-icon-[mdi--account-box-outline]"></span></span><span class="tools-drop-copy"><span class="tools-drop-title">小册子2.0版</span><span class="tools-drop-desc">经典纸娃娃模拟器版本。</span></span></a><a href="/zww_cases.php" class="tools-drop-card"><span class="tools-drop-icon"><span class="tw-icon-[mdi--image-multiple-outline]"></span></span><span class="tools-drop-copy"><span class="tools-drop-title">搭配方案中心</span><span class="tools-drop-desc">浏览玩家发布的外观搭配方案。</span></span></a><a href="/zww_designers.php" class="tools-drop-card"><span class="tools-drop-icon"><span class="tw-icon-[mdi--account-star-outline]"></span></span><span class="tools-drop-copy"><span class="tools-drop-title">设计师</span><span class="tools-drop-desc">查看纸娃娃设计师与作品。</span></span></a><a href="/zhiwawa_skin/" class="tools-drop-card"><span class="tools-drop-icon"><span class="tw-icon-[mdi--palette-outline]"></span></span><span class="tools-drop-copy"><span class="tools-drop-title">皮肤市场</span><span class="tools-drop-desc">浏览和下载玩家上传的 PSD / PNG 皮肤文件。</span></span><span class="tag-blue">New</span></a><a href="/zhiwawa_skin/manage.php" class="tools-drop-card"><span class="tools-drop-icon"><span class="tw-icon-[mdi--upload-outline]"></span></span><span class="tools-drop-copy"><span class="tools-drop-title">皮肤管理</span><span class="tools-drop-desc">上传皮肤并查看自己的下载情况。</span></span></a><a href="/tools/zww-maketools/" class="tools-drop-card"><span class="tools-drop-icon"><span class="tw-icon-[mdi--tshirt-crew-outline]"></span></span><span class="tools-drop-copy"><span class="tools-drop-title">皮肤制作工具</span><span class="tools-drop-desc">制作纸娃娃皮肤 PNG 动作图。</span></span></a><a href="/zww_case_rank.php" class="tools-drop-card"><span class="tools-drop-icon"><span class="case-rank-hero-icon"></span></span><span class="tools-drop-copy"><span class="tools-drop-title">搭配排行</span><span class="tools-drop-desc">按点赞、收藏、浏览统计热门搭配。</span></span><span class="tag-blue">New</span></a><a href="/tools/rank/" class="tools-drop-card"><span class="tools-drop-icon"><span class="tw-icon-[mdi--fire]"></span></span><span class="tools-drop-copy"><span class="tools-drop-title">热门单品排行</span><span class="tools-drop-desc">按方案统计外观单个道具热度。</span></span><span class="tag-red">Hot</span></a><a href="/tools/demage-skin/" class="tools-drop-card"><span class="tools-drop-icon"><span class="tw-icon-[mdi--sword-cross]"></span></span><span class="tools-drop-copy"><span class="tools-drop-title">伤害皮肤模拟器</span><span class="tools-drop-desc">预览伤害皮肤数字效果。</span></span><span class="tag-blue">New</span></a><a href="/zhiwawa/" class="tools-drop-card"><span class="tools-drop-icon"><span class="tw-icon-[mdi--package-variant-closed]"></span></span><span class="tools-drop-copy"><span class="tools-drop-title">纸娃娃 旧版 Maples.IM</span><span class="tools-drop-desc">保留旧版 Maples.IM 入口。</span></span></a></div></div>                                    </div>
+                                                <div class="tw-relative dropdown-anchor" data-dropdown data-dropdown-mode="hover">
+                    <a href="/search.php" class="nav-link " data-dropdown-trigger aria-expanded="false">
+                        <span class="tw-icon-[mdi--target-account] tw-h-5 tw-w-5 tw-text-[20px]"></span>
+                        <span>工具</span>
+                                                <span class="tw-icon-[ph--caret-down-bold] tw-h-4 tw-w-4 tw-text-[16px]"></span>
+                                            </a>
+                                        <div class="nav-drop dropdown-panel tools-drop-panel" data-dropdown-panel><div class="tools-drop-grid"><a href="/search.php" class="tools-drop-card"><span class="tools-drop-icon"><span class="tw-icon-[mdi--magnify]"></span></span><span class="tools-drop-copy"><span class="tools-drop-title">全局搜索</span><span class="tools-drop-desc">搜索道具、怪物、任务与技能。</span></span></a><a href="/tools/price-trend/" class="tools-drop-card"><span class="tools-drop-icon"><span class="tw-icon-[mdi--chart-timeline-variant]"></span></span><span class="tools-drop-copy"><span class="tools-drop-title">游戏币价格走势</span><span class="tools-drop-desc">查看各区服游戏币比例走势与排行。</span></span></a><a href="/tools/maptools/" class="tools-drop-card"><span class="tools-drop-icon"><span class="tw-icon-[mdi--map-outline]"></span></span><span class="tools-drop-copy"><span class="tools-drop-title">地图工具</span><span class="tools-drop-desc">浏览地图、传送和地图关联。</span></span></a><a href="/tools/skilltools/" class="tools-drop-card"><span class="tools-drop-icon"><span class="tw-icon-[mdi--book-search-outline]"></span></span><span class="tools-drop-copy"><span class="tools-drop-title">技能查询</span><span class="tools-drop-desc">查看职业技能与技能数据。</span></span></a><a href="/tools/link/" class="tools-drop-card"><span class="tools-drop-icon"><span class="tw-icon-[mdi--link-variant]"></span></span><span class="tools-drop-copy"><span class="tools-drop-title">Link 查询</span><span class="tools-drop-desc">查看职业 Link、角色卡与服务器适用范围。</span></span><span class="tag-blue">New</span></a><a href="/tools/demage-skin/" class="tools-drop-card"><span class="tools-drop-icon"><span class="tw-icon-[mdi--sword-cross]"></span></span><span class="tools-drop-copy"><span class="tools-drop-title">伤害皮肤模拟器</span><span class="tools-drop-desc">预览伤害皮肤普通与暴击数字效果。</span></span></a><a href="/tools/drops/" class="tools-drop-card"><span class="tools-drop-icon"><span class="tw-icon-[mdi--treasure-chest-outline]"></span></span><span class="tools-drop-copy"><span class="tools-drop-title">掉落查询</span><span class="tools-drop-desc">按怪物或道具查询掉落来源。</span></span></a><a href="/tools/rank/" class="tools-drop-card"><span class="tools-drop-icon"><span class="tw-icon-[mdi--fire]"></span></span><span class="tools-drop-copy"><span class="tools-drop-title">热门外观排行</span><span class="tools-drop-desc">按纸娃娃方案统计外观道具使用热度。</span></span></a><a href="/tools/experience/" class="tools-drop-card"><span class="tools-drop-icon"><span class="tw-icon-[mdi--clock-outline]"></span></span><span class="tools-drop-copy"><span class="tools-drop-title">经验计算器-怀旧</span><span class="tools-drop-desc">怀旧版升级经验与坐车估算。</span></span></a><a href="/tools/accuracy/" class="tools-drop-card"><span class="tools-drop-icon"><span class="tw-icon-[mdi--target-account]"></span></span><span class="tools-drop-copy"><span class="tools-drop-title">命中率计算器</span><span class="tools-drop-desc">计算角色命中与怪物等级差。</span></span></a><a href="/tools/hyperstats/" class="tools-drop-card"><span class="tools-drop-icon"><span class="tw-icon-[mdi--calculator-variant-outline]"></span></span><span class="tools-drop-copy"><span class="tools-drop-title">超级属性计算器</span><span class="tools-drop-desc">计算超级属性点数、消耗与最终加成。</span></span><span class="tag-blue">New</span></a><a href="/tools/legion-solver/" class="tools-drop-card"><span class="tools-drop-icon"><span class="tw-icon-[mdi--view-grid-outline]"></span></span><span class="tools-drop-copy"><span class="tools-drop-title">联盟摆放工具</span><span class="tools-drop-desc">规划联盟格子与拼图摆放。</span></span></a><a href="/nexon/tms/ranking.php" class="tools-drop-card"><span class="tools-drop-icon"><span class="tw-icon-[icon-park-outline--gold-medal]"></span></span><span class="tools-drop-copy"><span class="tools-drop-title">枫之谷TMS角色排行与查询</span><span class="tools-drop-desc">查询台服角色排行、角色详情与联盟资料。</span></span></a><a href="/nexon/kms/ranking.php" class="tools-drop-card"><span class="tools-drop-icon"><span class="tw-icon-[icon-park-outline--ranking]"></span></span><span class="tools-drop-copy"><span class="tools-drop-title">冒险岛KMS角色排行与查询</span><span class="tools-drop-desc">查询韩服角色排行、角色详情与联盟资料。</span></span><span class="tag-blue">New</span></a></div></div>                                    </div>
+                                                <div class="tw-relative dropdown-anchor" data-dropdown data-dropdown-mode="hover">
+                    <a href="/item_list.php" class="nav-link " >
+                        <span class="tw-icon-[mdi--package-variant-closed] tw-h-5 tw-w-5 tw-text-[20px]"></span>
+                        <span>道具</span>
+                                            </a>
+                                    </div>
+                                                <div class="tw-relative dropdown-anchor" data-dropdown data-dropdown-mode="hover">
+                    <a href="/appearance_list.php" class="nav-link " data-dropdown-trigger aria-expanded="false">
+                        <span class="tw-icon-[mdi--hanger] tw-h-5 tw-w-5 tw-text-[20px]"></span>
+                        <span>外观</span>
+                                                <span class="tw-icon-[ph--caret-down-bold] tw-h-4 tw-w-4 tw-text-[16px]"></span>
+                                            </a>
+                                        <div class="nav-drop dropdown-panel" data-dropdown-panel><a href="/appearance_list.php?category=Skin" class="nav-drop-item"><span class="tw-flex tw-min-w-0 tw-items-center tw-gap-2"><span class="nav-drop-list-icon"><span class="tw-icon-[fluent--emoji-sparkle-24-filled]"></span></span><span class="nav-drop-line">肤色</span></span><span class="tw-flex tw-shrink-0 tw-items-center tw-gap-2"></span></a><a href="/appearance_list.php?category=Hair" class="nav-drop-item"><span class="tw-flex tw-min-w-0 tw-items-center tw-gap-2"><span class="nav-drop-list-icon"><span class="tw-icon-[mdi--face-man-shimmer-outline]"></span></span><span class="nav-drop-line">发型</span></span><span class="tw-flex tw-shrink-0 tw-items-center tw-gap-2"></span></a><a href="/appearance_list.php?category=Face" class="nav-drop-item"><span class="tw-flex tw-min-w-0 tw-items-center tw-gap-2"><span class="nav-drop-list-icon"><span class="tw-icon-[mdi--emoticon-outline]"></span></span><span class="nav-drop-line">脸型</span></span><span class="tw-flex tw-shrink-0 tw-items-center tw-gap-2"></span></a><a href="/appearance_list.php?category=Chair" class="nav-drop-item"><span class="tw-flex tw-min-w-0 tw-items-center tw-gap-2"><span class="nav-drop-list-icon"><span class="tw-icon-[mdi--seat-outline]"></span></span><span class="nav-drop-line">椅子</span></span><span class="tw-flex tw-shrink-0 tw-items-center tw-gap-2"></span></a><a href="/appearance_list.php" class="nav-drop-item"><span class="tw-flex tw-min-w-0 tw-items-center tw-gap-2"><span class="nav-drop-list-icon"><span class="tw-icon-[fluent--star-emphasis-24-filled]"></span></span><span class="nav-drop-line">其他</span></span><span class="tw-flex tw-shrink-0 tw-items-center tw-gap-2"></span></a></div>                                    </div>
+                                                <div class="tw-relative dropdown-anchor" data-dropdown data-dropdown-mode="hover">
+                    <a href="/mob_list.php" class="nav-link " >
+                        <span class="tw-icon-[mdi--snail] tw-h-5 tw-w-5 tw-text-[20px]"></span>
+                        <span>怪物</span>
+                                            </a>
+                                    </div>
+                                                <div class="tw-relative dropdown-anchor" data-dropdown data-dropdown-mode="hover">
+                    <a href="/tools/maptools/" class="nav-link " >
+                        <span class="tw-icon-[mdi--map-outline] tw-h-5 tw-w-5 tw-text-[20px]"></span>
+                        <span>地图</span>
+                                            </a>
+                                    </div>
+                                                <div class="tw-relative dropdown-anchor" data-dropdown data-dropdown-mode="hover">
+                    <a href="/tools/skilltools/" class="nav-link " >
+                        <span class="tw-icon-[mdi--book-search-outline] tw-h-5 tw-w-5 tw-text-[20px]"></span>
+                        <span>技能</span>
+                                            </a>
+                                    </div>
+                                                <div class="tw-relative dropdown-anchor" data-dropdown data-dropdown-mode="hover">
+                    <a href="/fankui.php" class="nav-link " >
+                        <span class="tw-icon-[ph--pencil-line-fill] tw-h-5 tw-w-5 tw-text-[20px]"></span>
+                        <span>反馈</span>
+                                            </a>
+                                    </div>
+                                                <div class="tw-relative dropdown-anchor" data-dropdown data-dropdown-mode="hover">
+                    <a href="/old.php" class="nav-link " data-dropdown-trigger aria-expanded="false">
+                        <span class="tw-icon-[fluent--games-20-filled] tw-h-5 tw-w-5 tw-text-[20px]"></span>
+                        <span>版本专区</span>
+                                                <span class="tw-icon-[ph--caret-down-bold] tw-h-4 tw-w-4 tw-text-[16px]"></span>
+                                            </a>
+                                        <div class="nav-drop dropdown-panel tools-drop-panel version-zone-drop-panel" data-dropdown-panel><div class="tools-drop-grid"><a href="https://mxdc.dvg.cn/" target="_blank" rel="noopener noreferrer" class="tools-drop-card"><span class="tools-drop-icon"><span class="tw-icon-[fluent--games-24-regular]"></span></span><span class="tools-drop-copy"><span class="tools-drop-title">国服怀旧专版</span><span class="tools-drop-desc">国服经典怀旧版本资料专区。</span></span><span class="tag-red">HOT</span></a><a href="https://mxd079.dvg.cn/" target="_blank" rel="noopener noreferrer" class="tools-drop-card"><span class="tools-drop-icon"><span class="tw-icon-[fluent--calendar-clock-24-regular]"></span></span><span class="tools-drop-copy"><span class="tools-drop-title">079专版</span><span class="tools-drop-desc">经典079版本数据库与资料。</span></span><span class="tag-red">HOT</span></a><a href="https://mxdgcw.dvg.cn/" target="_blank" rel="noopener noreferrer" class="tools-drop-card"><span class="tools-drop-icon"><span class="tw-icon-[fluent--globe-24-regular]"></span></span><span class="tools-drop-copy"><span class="tools-drop-title">国际怀旧专版</span><span class="tools-drop-desc">国际服怀旧版本资料专区。</span></span></a><a href="/old.php" class="tools-drop-card"><span class="tools-drop-icon"><span class="tw-icon-[fluent--book-open-24-regular]"></span></span><span class="tools-drop-copy"><span class="tools-drop-title">旧版小册子</span><span class="tools-drop-desc">返回原版冒险岛小册子。</span></span></a></div></div>                                    </div>
+                            </nav>
+
+            <div class="tw-flex tw-items-center tw-gap-1">
+                <button class="search-box" type="button" data-ui-global-search-open>
+                    <span class="tw-icon-[ph--magnifying-glass-bold] tw-h-[18px] tw-w-[18px] tw-text-text-soft dark:tw-text-text-darksoft"></span>
+                    <span class="tw-text-[15px] tw-text-text-soft dark:tw-text-text-darksoft">Search</span>
+                    <span class="tw-rounded-full tw-bg-slateblue tw-px-1.5 tw-py-0.5 tw-text-[11px] tw-text-text-soft dark:tw-bg-slate-800 dark:tw-text-text-darksoft">全局</span>
+                </button>
+                <button type="button" class="icon-btn lg:tw-hidden" data-ui-global-search-open>
+                    <span class="tw-icon-[ph--magnifying-glass-bold] tw-h-5 tw-w-5"></span>
+                </button>
+                <button type="button" class="icon-btn tw-inline-flex" data-theme-toggle>
+                    <span class="tw-icon-[ph--moon-fill] tw-h-[18px] tw-w-[18px] dark:tw-hidden"></span>
+                    <span class="tw-icon-[ph--sun-fill] tw-hidden tw-h-[18px] tw-w-[18px] dark:tw-inline-block"></span>
+                </button>
+                
+                                <div class="tw-relative tw-block" data-dropdown data-dropdown-mode="click">
+                    <button type="button" class="icon-btn" data-dropdown-trigger aria-expanded="false">
+                        <span class="tw-icon-[ph--folders-fill] tw-h-[18px] tw-w-[18px]"></span>
+                        <span class="top-badge" data-region-current-badge>CMS</span>
+                    </button>
+                    <div class="nav-drop dropdown-panel  control-menu" data-dropdown-panel><a href="javascript:void(0)" data-region-option="1" data-region="CMS" data-region-label="CMS-229" data-dataset-key="cms-229" data-dataset-label="CMS-229" data-basewz-suffix="" data-db-mxd-version-field="v_cms" class="nav-drop-item"><span class="tw-flex tw-min-w-0 tw-items-center tw-gap-2"><span class="nav-drop-line">CMS-229</span></span><span class="tw-flex tw-shrink-0 tw-items-center tw-gap-2"><span class="tag-blue" title="当前" aria-label="当前"><span class="tw-icon-[mdi--check-bold]"></span></span></span></a><a href="javascript:void(0)" data-region-option="1" data-region="TMS" data-region-label="TMS-283" data-dataset-key="tms-283" data-dataset-label="TMS-283" data-basewz-suffix="_tms" data-db-mxd-version-field="v_tms" class="nav-drop-item"><span class="tw-flex tw-min-w-0 tw-items-center tw-gap-2"><span class="nav-drop-line">TMS-283</span></span><span class="tw-flex tw-shrink-0 tw-items-center tw-gap-2"></span></a><a href="javascript:void(0)" data-region-option="1" data-region="GMS" data-region-label="GMS-271" data-dataset-key="gms-271" data-dataset-label="GMS-271" data-basewz-suffix="_gms" data-db-mxd-version-field="v_gms" class="nav-drop-item"><span class="tw-flex tw-min-w-0 tw-items-center tw-gap-2"><span class="nav-drop-line">GMS-271</span></span><span class="tw-flex tw-shrink-0 tw-items-center tw-gap-2"></span></a><a href="javascript:void(0)" data-region-option="1" data-region="KMS" data-region-label="KMS-416" data-dataset-key="kms-416" data-dataset-label="KMS-416" data-basewz-suffix="_kms" data-db-mxd-version-field="v_kms" class="nav-drop-item"><span class="tw-flex tw-min-w-0 tw-items-center tw-gap-2"><span class="nav-drop-line">KMS-416</span></span><span class="tw-flex tw-shrink-0 tw-items-center tw-gap-2"></span></a><a href="https://mxdc.dvg.cn/" target="_blank" rel="noopener noreferrer" class="nav-drop-item"><span class="tw-flex tw-min-w-0 tw-items-center tw-gap-2"><span class="nav-drop-line">国服怀旧</span></span><span class="tw-flex tw-shrink-0 tw-items-center tw-gap-2"><span class="tw-icon-[fluent--open-20-regular] tw-h-4 tw-w-4 tw-text-text-soft dark:tw-text-text-darksoft" title="前往独立站点" aria-label="前往独立站点"></span></span></a><a href="https://mxdgcw.dvg.cn/" target="_blank" rel="noopener noreferrer" class="nav-drop-item"><span class="tw-flex tw-min-w-0 tw-items-center tw-gap-2"><span class="nav-drop-line">国际怀旧</span></span><span class="tw-flex tw-shrink-0 tw-items-center tw-gap-2"><span class="tw-icon-[fluent--open-20-regular] tw-h-4 tw-w-4 tw-text-text-soft dark:tw-text-text-darksoft" title="前往独立站点" aria-label="前往独立站点"></span></span></a><a href="javascript:void(0)" data-region-option="1" data-region="079" data-region-label="怀旧-079" data-dataset-key="cms-079" data-dataset-label="怀旧-079" data-basewz-suffix="_079" data-db-mxd-version-field="v_079" class="nav-drop-item"><span class="tw-flex tw-min-w-0 tw-items-center tw-gap-2"><span class="nav-drop-line">怀旧-079</span></span><span class="tw-flex tw-shrink-0 tw-items-center tw-gap-2"></span></a><a href="javascript:void(0)" data-region-option="1" data-region="083" data-region-label="怀旧-083" data-dataset-key="cms-083" data-dataset-label="怀旧-083" data-basewz-suffix="_083" data-db-mxd-version-field="v_083" class="nav-drop-item"><span class="tw-flex tw-min-w-0 tw-items-center tw-gap-2"><span class="nav-drop-line">怀旧-083</span></span><span class="tw-flex tw-shrink-0 tw-items-center tw-gap-2"></span></a><a href="javascript:void(0)" data-region-option="1" data-region="143" data-region-label="怀旧-143" data-dataset-key="cms-143" data-dataset-label="怀旧-143" data-basewz-suffix="_143" data-db-mxd-version-field="v_143" class="nav-drop-item"><span class="tw-flex tw-min-w-0 tw-items-center tw-gap-2"><span class="nav-drop-line">怀旧-143</span></span><span class="tw-flex tw-shrink-0 tw-items-center tw-gap-2"></span></a></div>                </div>
+                
+                
+                <div class="member-nav-slot" data-member-root>
+                    <button type="button" class="member-nav-btn" data-member-login-open aria-label="登录">
+                        <span class="tw-icon-[mdi--account-circle-outline] tw-h-6 tw-w-6"></span>
+                    </button>
+                    <div class="tw-absolute tw-inset-0 tw-hidden" data-member-menu-wrap>
+                        <button type="button" class="member-nav-avatar" data-member-profile-open aria-label="打开资料设置">
+                            <img src="https://u2.dvg.cn/static/images/default_avatar.png" alt="" class="tw-h-full tw-w-full tw-object-cover" data-member-avatar>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+<aside class="member-drawer tw-z-[1210]" data-member-drawer data-ui-drawer data-ui-placement="right" aria-label="用户资料设置">
+    <div class="member-drawer-head">
+        <div class="tw-flex tw-items-center tw-gap-3">
+            <div class="member-drawer-icon">
+                <span class="tw-icon-[mdi--account-cog-outline] tw-text-[20px]" data-member-drawer-icon></span>
+            </div>
+            <div class="tw-text-[15px] tw-font-semibold tw-text-text-light dark:tw-text-text-dark" data-member-drawer-title>资料设置</div>
+        </div>
+        <button type="button" class="member-round-btn" data-member-drawer-close data-ui-drawer-close aria-label="关闭">
+            <span class="tw-icon-[mdi--close] tw-text-[20px]"></span>
+        </button>
+    </div>
+    <div class="member-drawer-body">
+        <div data-profile-view>
+            <div class="member-card">
+                <div class="tw-flex tw-items-center tw-gap-3">
+                    <div class="tw-relative">
+                        <img src="https://u2.dvg.cn/static/images/default_avatar.png" class="tw-h-16 tw-w-16 tw-rounded-md tw-bg-slate-100 tw-object-cover dark:tw-bg-surface-dark" alt="" data-profile-avatar>
+                        <label class="member-camera-btn">
+                            <input type="file" accept="image/jpeg,image/png,image/webp,image/gif" class="tw-hidden" data-profile-avatar-input>
+                            <span class="tw-icon-[mdi--camera-outline] tw-text-[17px]"></span>
+                        </label>
+                    </div>
+                    <div class="tw-min-w-0 tw-flex-1">
+                        <div class="tw-flex tw-min-w-0 tw-items-center tw-gap-2">
+                            <div class="tw-truncate tw-text-[15px] tw-font-semibold tw-text-text-light dark:tw-text-text-dark" data-profile-nickname>未登录用户</div>
+                            <span class="member-level-badge" title="用户等级">
+                                <span class="tw-icon-[mdi--medal-outline]"></span>
+                                <b data-profile-level-badge>Lv.1 初心者</b>
+                            </span>
+                        </div>
+                        <div class="tw-mt-1 tw-flex tw-flex-wrap tw-gap-2 tw-text-[11px] tw-text-text-soft dark:tw-text-text-darksoft">
+                            <span class="member-pill member-uid-pill">UID <span data-profile-userid>0</span><button class="member-pill-copy" type="button" data-ui-copy-text="0" data-ui-copy-message="UID已复制" data-ui-copy-state="icon" title="复制UID" aria-label="复制UID" data-profile-copy-userid><span class="tw-icon-[mdi--content-copy]"></span></button></span>
+                            <span class="member-pill" data-profile-password-state>未设置密码</span>
+                            <span class="member-pill" data-profile-email-state>未绑定邮箱</span>
+                        </div>
+                        <div class="tw-mt-2 tw-flex tw-items-center tw-gap-1.5 tw-text-[13px] tw-leading-none">
+                            <span class="tw-icon-[mdi--account-key-outline] tw-text-[15px] tw-text-slate-400 dark:tw-text-slate-500"></span>
+                            <span class="tw-text-text-soft dark:tw-text-text-darksoft">账户名</span>
+                            <span class="tw-font-medium tw-text-slate-700 dark:tw-text-slate-200" data-profile-username>--</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="member-points-row">
+                    <span class="member-points-badge" title="当前积分">
+                        <span class="tw-icon-[mdi--star-four-points-outline]"></span>
+                        <span>当前积分</span>
+                        <b data-profile-userfen>读取中</b>
+                    </span>
+                    <a class="member-qq-group-link" href="/pages/points.php" title="积分获取方式">
+                        <span class="tw-icon-[mdi--help-circle-outline]"></span>
+                        <span>积分获取方式</span>
+                    </a>
+                    <button class="member-points-bill-link" type="button" data-ui-modal-target="#member-points-bill-modal" title="积分账单">
+                        <span class="tw-icon-[mdi--receipt-text-outline]"></span>
+                        <span>积分账单</span>
+                    </button>
+                </div>
+                <div class="member-redeem-row">
+                    <a href="/pages/redeem.php" title="积分兑换码">
+                        <span class="tw-icon-[mdi--ticket-percent-outline]"></span>
+                        <span>兑换码</span>
+                        <small>兑换群内活动积分</small>
+                        <span class="tw-icon-[mdi--chevron-right]"></span>
+                    </a>
+                </div>
+                <div class="tw-mt-3 tw-hidden tw-text-[12px] tw-text-text-soft dark:tw-text-text-darksoft" data-profile-avatar-status>头像上传中...</div>
+            </div>
+
+            <div class="tw-mt-3 tw-space-y-3">
+                                <div class="member-quick-actions" aria-label="会员功能">
+                    <a href="/member_center.php?tab=following" class="member-quick-action">
+                        <span class="tw-icon-[mdi--account-heart-outline]"></span>
+                        <b>我的关注</b>
+                        <small>关注的设计师</small>
+                    </a>
+                    <a href="/member_center.php?tab=favorites" class="member-quick-action">
+                        <span class="tw-icon-[mdi--heart-outline]"></span>
+                        <b>我的收藏</b>
+                        <small>配装与资料收藏</small>
+                    </a>
+                </div>
+
+                <div class="member-card tw-hidden" data-account-merge-card>
+                    <div class="tw-flex tw-items-start tw-justify-between tw-gap-3">
+                        <div class="tw-min-w-0">
+                            <div class="tw-text-[14px] tw-font-semibold tw-text-text-light dark:tw-text-text-dark">合并微信账号</div>
+                            <div class="tw-mt-1 tw-text-[11px] tw-leading-5 tw-text-text-soft dark:tw-text-text-darksoft">当前邮箱账号的数据将合并到微信账号，合并后以微信账号作为主账号。</div>
+                        </div>
+                        <button type="button" class="member-btn member-btn-emerald tw-shrink-0" data-account-merge-wechat>去合并</button>
+                    </div>
+                    <div class="tw-mt-2 tw-text-[11px] tw-leading-5 tw-text-amber-600 dark:tw-text-amber-300">需要使用微信扫码确认，完成后旧邮箱账号会被禁用并保留追溯记录。</div>
+                </div>
+
+                <div class="member-card tw-hidden" data-username-card>
+                    <div class="tw-flex tw-items-center tw-justify-between tw-gap-3">
+                        <div>
+                            <div class="tw-text-[14px] tw-font-semibold tw-text-text-light dark:tw-text-text-dark">登录用户名</div>
+                            <div class="tw-mt-1 tw-text-[11px] tw-text-text-soft dark:tw-text-text-darksoft">微信自动生成用户名可修改一次，用于账号密码登录</div>
+                        </div>
+                        <button type="button" class="member-btn member-btn-dark tw-shrink-0" data-profile-save-username>保存用户名</button>
+                    </div>
+                    <div class="tw-mt-3">
+                        <input type="text" maxlength="20" placeholder="请输入 3-20 位字母、数字或下划线" class="member-input" data-profile-username-input>
+                    </div>
+                </div>
+
+                <div class="member-card">
+                    <div class="tw-flex tw-items-center tw-justify-between">
+                        <div>
+                            <div class="tw-text-[14px] tw-font-semibold tw-text-text-light dark:tw-text-text-dark">昵称</div>
+                            <div class="tw-mt-1 tw-text-[11px] tw-text-text-soft dark:tw-text-text-darksoft">建议 2-20 个字符，简单好认</div>
+                        </div>
+                        <button type="button" class="member-btn member-btn-dark" data-profile-save-nickname>保存昵称</button>
+                    </div>
+                    <div class="tw-mt-3">
+                        <input type="text" maxlength="20" placeholder="请输入昵称" class="member-input" data-profile-nickname-input>
+                    </div>
+                </div>
+
+                <div class="member-card">
+                    <div class="tw-flex tw-items-center tw-justify-between">
+                        <div>
+                            <div class="tw-text-[14px] tw-font-semibold tw-text-text-light dark:tw-text-text-dark">绑定邮箱</div>
+                            <div class="tw-mt-1 tw-text-[11px] tw-text-text-soft dark:tw-text-text-darksoft">用于找回账号与安全验证</div>
+                        </div>
+                        <button type="button" class="member-btn member-btn-sky" data-profile-save-email>绑定邮箱</button>
+                    </div>
+                    <div class="tw-mt-3">
+                        <input type="email" placeholder="请输入常用邮箱" class="member-input member-input-warn" data-profile-email-input>
+                    </div>
+                </div>
+
+                <div class="member-card" data-set-password-card>
+                    <div>
+                        <div class="tw-text-[14px] tw-font-semibold tw-text-text-light dark:tw-text-text-dark">设置密码</div>
+                        <div class="tw-mt-1 tw-text-[11px] tw-text-text-soft dark:tw-text-text-darksoft">首次设置后，可以使用账号密码登录</div>
+                    </div>
+                    <div class="tw-mt-3 tw-grid tw-grid-cols-1 tw-gap-2">
+                        <input type="password" placeholder="请输入新密码" class="member-input" data-set-password>
+                        <input type="password" placeholder="请再次输入新密码" class="member-input" data-set-password-confirm>
+                    </div>
+                    <div class="tw-mt-3">
+                        <button type="button" class="member-btn member-btn-emerald" data-submit-set-password>确认设置密码</button>
+                    </div>
+                </div>
+
+                <div class="member-card tw-hidden" data-change-password-card>
+                    <div>
+                        <div class="tw-text-[14px] tw-font-semibold tw-text-text-light dark:tw-text-text-dark">修改密码</div>
+                        <div class="tw-mt-1 tw-text-[11px] tw-text-text-soft dark:tw-text-text-darksoft">输入旧密码后更新为新密码</div>
+                    </div>
+                    <div class="tw-mt-3 tw-grid tw-grid-cols-1 tw-gap-2">
+                        <input type="password" placeholder="请输入当前密码" class="member-input" data-change-old-password>
+                        <input type="password" placeholder="请输入新密码" class="member-input" data-change-new-password>
+                        <input type="password" placeholder="请再次输入新密码" class="member-input" data-change-confirm-password>
+                    </div>
+                    <div class="tw-mt-3">
+                        <button type="button" class="member-btn member-btn-amber" data-submit-change-password>确认修改密码</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tw-hidden" data-forgot-view>
+            <div class="member-card">
+                <div class="tw-flex tw-items-start tw-gap-3">
+                    <div class="tw-flex tw-h-12 tw-w-12 tw-items-center tw-justify-center tw-rounded-md tw-bg-purple-50 tw-text-purple-500 dark:tw-bg-purple-500/15 dark:tw-text-purple-300">
+                        <span class="tw-icon-[mdi--shield-key-outline] tw-text-[24px]"></span>
+                    </div>
+                    <div class="tw-flex-1">
+                        <div class="tw-text-[15px] tw-font-semibold tw-text-text-light dark:tw-text-text-dark">通过邮箱重置密码</div>
+                        <div class="tw-mt-1 tw-text-[12px] tw-text-text-soft dark:tw-text-text-darksoft">输入账号绑定邮箱，系统会发送 6 位验证码到你的邮箱，然后即可重新设置密码。</div>
+                    </div>
+                </div>
+                <div class="tw-mt-4 tw-space-y-3" data-forgot-form>
+                    <input type="email" placeholder="请输入账号绑定邮箱" class="member-input" data-forgot-email>
+                    <div class="tw-flex tw-gap-2">
+                        <input type="text" maxlength="6" placeholder="请输入 6 位验证码" class="member-input tw-flex-1" data-forgot-code>
+                        <button type="button" class="member-btn member-btn-dark tw-shrink-0" data-send-reset-code>发送验证码</button>
+                    </div>
+                    <input type="password" placeholder="请输入新的登录密码" class="member-input" data-forgot-new-password>
+                    <input type="password" placeholder="请再次输入新的登录密码" class="member-input" data-forgot-confirm-password>
+                </div>
+                <div class="tw-mt-4 tw-flex tw-gap-2" data-forgot-actions>
+                    <button type="button" class="member-btn member-btn-emerald tw-flex-1" data-submit-forgot-password>确认重置密码</button>
+                    <button type="button" class="member-btn member-btn-soft" data-forgot-back>返回</button>
+                </div>
+                <div class="tw-mt-4 tw-hidden tw-rounded-md tw-bg-emerald-50 tw-p-4 tw-text-emerald-700 dark:tw-bg-emerald-500/10 dark:tw-text-emerald-200" data-forgot-success>
+                    <div class="tw-flex tw-items-start tw-gap-3">
+                        <span class="tw-icon-[mdi--check-circle-outline] tw-mt-0.5 tw-text-[22px]"></span>
+                        <div class="tw-min-w-0">
+                            <div class="tw-text-[15px] tw-font-semibold">密码已重置</div>
+                            <div class="tw-mt-1 tw-text-[13px] tw-leading-5">请使用新密码重新登录。</div>
+                        </div>
+                    </div>
+                    <button type="button" class="member-btn member-btn-emerald tw-mt-4 tw-w-full" data-forgot-login>去登录</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="member-drawer-foot" data-member-drawer-foot>
+        <button type="button" class="member-btn member-btn-soft tw-gap-1.5" data-member-logout>
+            <span class="tw-icon-[mdi--logout] tw-text-[18px]"></span>
+            <span>退出登录</span>
+        </button>
+    </div>
+</aside>
+
+<div id="member-points-bill-modal" class="member-points-bill-modal tw-hidden" data-ui-modal role="dialog" aria-modal="true" aria-labelledby="member-points-bill-title">
+    <div class="member-points-bill-dialog">
+        <button type="button" class="member-points-bill-close" data-ui-modal-close data-member-points-bill-close aria-label="关闭">
+            <span class="tw-icon-[mdi--close]"></span>
+        </button>
+        <div class="member-points-bill-hero">
+            <span class="member-points-bill-icon"><span class="tw-icon-[mdi--receipt-text-outline]"></span></span>
+            <div>
+                <div class="member-points-bill-kicker">积分账单</div>
+                <h2 id="member-points-bill-title">前往小程序查看明细</h2>
+            </div>
+        </div>
+        <div class="member-points-bill-qr">
+            <img src="/public/assets/img/home/mxd_xcz.png?v=20261022" alt="冒险岛小册子小程序二维码">
+        </div>
+        <p class="member-points-bill-text">积分账单请前往小程序中查看。</p>
+        <div class="member-points-bill-tip">
+            <span class="tw-icon-[mdi--wechat]"></span>
+            <span>微信扫一扫，打开冒险岛小册子小程序</span>
+        </div>
+    </div>
+</div>
+
+<div class="member-auth-modal" data-auth-modal>
+    <div class="member-auth-dialog" role="dialog" aria-modal="true" aria-label="登录或注册">
+        <div class="member-auth-brand">
+            <svg class="member-auth-brand-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M7.5 4a5.5 5.5 0 0 0-5.43 4.62l-1 6A4.65 4.65 0 0 0 5.66 20c1.75 0 3.22-.93 4.1-2.34L10.8 16h2.4l1.04 1.66A4.82 4.82 0 0 0 18.34 20a4.65 4.65 0 0 0 4.59-5.38l-1-6A5.5 5.5 0 0 0 16.5 4h-9zM8 8a.75.75 0 0 1 .75.75v1.5h1.5a.75.75 0 0 1 0 1.5h-1.5v1.5a.75.75 0 0 1-1.5 0v-1.5h-1.5a.75.75 0 0 1 0-1.5h1.5v-1.5A.75.75 0 0 1 8 8zm8.75.5a1.25 1.25 0 1 1 0 2.5 1.25 1.25 0 0 1 0-2.5zm2 3a1.25 1.25 0 1 1 0 2.5 1.25 1.25 0 0 1 0-2.5z"/></svg>
+            <span>DVG<span class="member-auth-brand-caption">游戏网 · 会员中心</span></span>
+            <button type="button" class="member-round-btn member-auth-brand-close" data-auth-close aria-label="关闭">
+                <span class="tw-icon-[mdi--close] tw-text-[20px]"></span>
+            </button>
+        </div>
+        <div class="tw-flex tw-items-center tw-justify-between tw-px-5 tw-pt-4">
+            <div class="tw-flex tw-gap-4 tw-text-[18px] tw-font-semibold">
+                <button type="button" class="member-auth-tab is-active" data-auth-tab="login">登录</button>
+                <button type="button" class="member-auth-tab" data-auth-tab="register">注册</button>
+            </div>
+        </div>
+        <div class="tw-p-5">
+            <div data-auth-panel="login">
+                <a href="https://open.weixin.qq.com/connect/qrconnect?appid=wx392169fb7dfe8634&amp;redirect_uri=https%3A%2F%2Fu2.dvg.cn%2Fapi_wx%2Fwechat_callback.php%3Fctx%3Dv1.eyJyZXR1cm4iOiJodHRwczpcL1wvbXhkLmR2Zy5jblwvemhpd2F3YV92NFwvIiwic3luY190byI6Imh0dHBzOlwvXC9teGQuZHZnLmNuXC9tZW1iZXJcL2F1dGhfc3luYy5waHAiLCJleHAiOjE3OTQwMzUyMjh9.7df90d40e204b97327293f3da0ff3979c132380663e5387941b07b7ee023a802&amp;response_type=code&amp;scope=snsapi_login&amp;state=login#wechat_redirect" class="member-wechat-btn">
+                    <span class="tw-icon-[mdi--wechat] tw-text-[20px]"></span>
+                    <span>使用微信快捷登录</span>
+                </a>
+                <div class="member-auth-divider"><span>或使用账号密码登录</span></div>
+                <div class="tw-grid tw-gap-3">
+                    <input type="text" class="member-input" autocomplete="username" placeholder="请输入用户名或邮箱" data-login-account>
+                    <input type="password" class="member-input" autocomplete="current-password" placeholder="请输入密码" data-login-password>
+                </div>
+                <div class="tw-mt-3 tw-flex tw-items-center tw-justify-between tw-text-[13px] tw-text-slate-500">
+                    <label class="tw-flex tw-items-center tw-gap-2" title="勾选后 30 天内保持登录"><input type="checkbox" data-login-remember>记住我</label>
+                    <button type="button" data-open-forgot>忘记密码？</button>
+                </div>
+                <button type="button" class="member-btn member-btn-dark tw-mt-4 tw-w-full" data-submit-login>登录</button>
+            </div>
+            <div class="tw-hidden" data-auth-panel="register">
+                <a href="https://open.weixin.qq.com/connect/qrconnect?appid=wx392169fb7dfe8634&amp;redirect_uri=https%3A%2F%2Fu2.dvg.cn%2Fapi_wx%2Fwechat_callback.php%3Fctx%3Dv1.eyJyZXR1cm4iOiJodHRwczpcL1wvbXhkLmR2Zy5jblwvemhpd2F3YV92NFwvIiwic3luY190byI6Imh0dHBzOlwvXC9teGQuZHZnLmNuXC9tZW1iZXJcL2F1dGhfc3luYy5waHAiLCJleHAiOjE3OTQwMzUyMjh9.7df90d40e204b97327293f3da0ff3979c132380663e5387941b07b7ee023a802&amp;response_type=code&amp;scope=snsapi_login&amp;state=login#wechat_redirect" class="member-wechat-btn">
+                    <span class="tw-icon-[mdi--wechat] tw-text-[20px]"></span>
+                    <span>使用微信快捷登录</span>
+                </a>
+                <div class="member-auth-divider"><span>或使用账号注册</span></div>
+                <div class="tw-grid tw-gap-3">
+                    <input type="text" class="member-input" autocomplete="username" placeholder="请输入用户名，4-20位" data-register-username>
+                    <div class="tw-flex tw-gap-2">
+                        <input autocomplete="email" type="email" class="member-input tw-min-w-0 tw-flex-1" placeholder="请输入邮箱" aria-describedby="register-email-policy-tip" data-register-email>
+                        <button type="button" class="member-btn member-btn-soft tw-shrink-0" data-send-register-code>发送验证码</button>
+                    </div>
+                    <input autocomplete="one-time-code" type="text" inputmode="numeric" maxlength="6" class="member-input" placeholder="请输入邮箱验证码" data-register-email-code>
+                    <div id="register-email-policy-tip" class="tw-rounded-md tw-bg-blue-50 tw-px-3 tw-py-2 tw-text-[12px] tw-leading-5 tw-text-blue-700 dark:tw-bg-sky-500/10 dark:tw-text-sky-300">
+                        注册前需要验证邮箱，后续找回密码、社区通知和账号安全提醒都会使用该邮箱。
+                    </div>
+                    <input type="password" class="member-input" autocomplete="new-password" placeholder="请输入6-32位密码" data-register-password>
+                    <input type="password" class="member-input" autocomplete="new-password" placeholder="再次输入密码" data-register-confirm>
+                </div>
+                <label class="tw-mt-3 tw-flex tw-items-center tw-gap-2 tw-text-[13px] tw-text-slate-500">
+                    <input type="checkbox" checked data-register-agree>我已阅读并同意用户协议与隐私政策
+                </label>
+                <button type="button" class="member-btn member-btn-emerald tw-mt-4 tw-w-full" data-submit-register>注册</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+window.UIV8_MEMBER_PAGE_IDENTITY = {"userid":"","expires":0};
+window.TOPHEADER_USER_API_URL = 'https://u2.dvg.cn/api/User.php';
+window.TOPHEADER_DEFAULT_AVATAR = 'https://u2.dvg.cn/static/images/default_avatar.png';
+window.TOPHEADER_MEMBER_ASSET_ORIGIN = 'https://u2.dvg.cn';
+window.MXD_REGION_DEFAULT = {"region":"CMS","datasetKey":"cms-229","datasetLabel":"CMS-229","version":"229"};
+</script>
+<script src="/public/assets/js/member-state.js?v=1794016081"></script>
+<main class="zhiwawa-shell">
+    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <style>
+.zhiwawa-shell{position:relative}
+#zww-early-loading{position:absolute;inset:0;display:grid;place-items:center;padding:24px;background:#f3f3f3;color:#334155;z-index:1;box-sizing:border-box}
+.zww-early-card{width:min(100%,320px);padding:28px 24px;text-align:center;background:#fff;border:1px solid #e2e8f0;border-radius:10px;box-sizing:border-box}
+.zww-early-card strong{font-size:19px;font-weight:600}.zww-early-card p{margin:14px 0 6px;font-size:14px}.zww-early-card small{font-size:12px;color:#64748b}
+.zww-early-spinner{display:block;width:24px;height:24px;margin:0 auto 18px;border:3px solid #dbeafe;border-top-color:#3b82f6;border-radius:50%;animation:zww-early-spin 1s linear infinite}
+@keyframes zww-early-spin{to{transform:rotate(360deg)}}
+.dark #zww-early-loading,.tw-dark #zww-early-loading{background:#101010;color:#e2e8f0}.dark .zww-early-card,.tw-dark .zww-early-card{background:#181818;border-color:#334155}
+@media(prefers-reduced-motion:reduce){.zww-early-spinner{animation:none}}
+</style>
+<section id="zww-early-loading" role="status" aria-live="polite">
+    <div class="zww-early-card">
+        <i class="zww-early-spinner" aria-hidden="true"></i>
+        <strong>纸娃娃 4.0</strong>
+        <p>正在准备装扮空间…</p>
+        <small>首次进入可能需要稍候</small>
+    </div>
+</section>
+    <div id="root"></div>
+</main>
+<link rel="modulepreload" crossorigin href="/zhiwawa_v4/dist/assets/character-DNF5c0Bs.js">
+<link rel="modulepreload" crossorigin href="/zhiwawa_v4/dist/assets/tamingMob-CTRmAstT.js">
+<link rel="modulepreload" crossorigin href="/zhiwawa_v4/dist/assets/chair-B8fqtLlx.js">
+<link rel="modulepreload" crossorigin href="/zhiwawa_v4/dist/assets/characterDrawer-C0hZX9TB.js">
+<link rel="modulepreload" crossorigin href="/zhiwawa_v4/dist/assets/__vite-browser-external-BEn6o9yG.js">
+<link rel="stylesheet" crossorigin href="/zhiwawa_v4/dist/assets/main-41bb462c.css">
+<link rel="stylesheet" href="/zhiwawa_v4/equipment-card-overrides.css?v=1792311114">
+<link rel="stylesheet" href="/zhiwawa_v4/pc-tool-settings.css?v=1781407065">
+<style>
+    html,
+    body {
+        height: 100%;
+    }
+
+    body {
+        overflow: hidden;
+        background: #f3f3f3;
+    }
+
+    .zhiwawa-shell {
+        width: 100%;
+        height: calc(100dvh - 89px);
+        min-height: 0;
+        margin: 0;
+        background: #f3f3f3;
+        border-radius: 0;
+    }
+
+    .tw-dark .zhiwawa-shell,
+    .dark .zhiwawa-shell {
+        background: #101010;
+    }
+
+    .tw-dark body,
+    .dark body {
+        background: #101010;
+    }
+
+    .zhiwawa-shell > #root {
+        width: 100%;
+        height: 100%;
+        min-height: 0;
+    }
+
+    .zhiwawa-shell--wxapp {
+        height: 100dvh;
+    }
+
+    @supports not (height: 100dvh) {
+        .zhiwawa-shell {
+            height: calc(100vh - 89px);
+        }
+
+        .zhiwawa-shell--wxapp {
+            height: 100vh;
+        }
+    }
+
+    @media (max-width: 767px) {
+        .zhiwawa-shell {
+            width: 100%;
+            height: calc(100dvh - 65px);
+            margin: 0;
+        }
+
+        .zhiwawa-shell--wxapp {
+            height: 100dvh;
+        }
+    }
+</style>
+<div class="tw-fixed tw-inset-0 tw-z-[1240] tw-hidden tw-bg-slate-950/45 dark:tw-bg-black/75" data-ui-search-backdrop></div>
+<div class="tw-fixed tw-inset-0 tw-z-[1250] tw-hidden tw-items-start tw-justify-center tw-px-3 tw-py-8 sm:tw-py-12" data-ui-global-search data-ui-search-api="/api/search.php" data-ui-search-page="/search.php" data-ui-search-tip="true" data-ui-search-limit="20" data-ui-search-placement="center" role="dialog" aria-modal="true" aria-label="全局搜索">
+    <div class="tw-flex tw-h-[min(720px,calc(100vh-4rem))] tw-w-full tw-max-w-[760px] tw-flex-col tw-overflow-hidden tw-rounded-md tw-border tw-border-line-light tw-bg-panel-light tw-text-text-light dark:tw-border-line-strongdark dark:tw-bg-[#202020] dark:tw-text-text-dark" data-ui-search-panel>
+        <div class="tw-flex tw-cursor-move tw-items-center tw-gap-3 tw-border-b tw-border-line-light tw-px-3 tw-py-2.5 dark:tw-border-line-dark" data-ui-search-drag-handle>
+            <span class="tw-icon-[mdi--magnify] tw-shrink-0 tw-text-[26px] tw-text-purple-500"></span>
+            <input data-form-plain data-ui-search-input class="global-search-input tw-h-10 tw-min-w-0 tw-flex-1 tw-border-0 tw-bg-transparent tw-text-[18px] tw-font-medium tw-text-text-light placeholder:tw-text-slate-400 focus:tw-border-0 focus:tw-bg-transparent focus:tw-outline-none focus:tw-ring-0 dark:tw-text-text-dark dark:placeholder:tw-text-text-darksoft dark:focus:tw-bg-transparent" placeholder="搜索道具、技能、NPC、任务..." autocomplete="off">
+            <button class="tw-hidden tw-h-7 tw-w-7 tw-shrink-0 tw-items-center tw-justify-center tw-rounded-full tw-bg-slate-100 tw-text-[18px] tw-text-text-soft tw-transition-colors hover:tw-bg-slate-200 hover:tw-text-text-light dark:tw-bg-white/10 dark:tw-text-text-darksoft dark:hover:tw-bg-white/15 dark:hover:tw-text-text-dark" type="button" data-ui-search-clear aria-label="清空搜索词" data-ui-tooltip="清空搜索词">
+                <span class="tw-icon-[mdi--close-circle-outline]"></span>
+            </button>
+            <button class="tw-inline-flex tw-h-8 tw-shrink-0 tw-items-center tw-justify-center tw-gap-1.5 tw-rounded-md tw-bg-slate-900 tw-px-2.5 tw-text-xs tw-font-medium tw-text-white tw-transition-colors hover:tw-bg-slate-800 dark:tw-bg-white dark:tw-text-slate-950 dark:hover:tw-bg-slate-200" type="button" data-ui-search-close aria-label="关闭搜索" data-ui-tooltip="关闭搜索">
+                <span class="tw-icon-[mdi--keyboard-esc] tw-text-[16px]"></span>
+                <span>关闭</span>
+            </button>
+        </div>
+
+        <div class="tw-border-b tw-border-line-light tw-px-3 dark:tw-border-line-dark">
+            <div class="tw-flex tw-gap-1 tw-overflow-x-auto" data-ui-search-tabs></div>
+        </div>
+
+        <div class="tw-flex tw-items-center tw-justify-between tw-gap-3 tw-border-b tw-border-line-light tw-px-4 tw-py-2 tw-text-xs tw-text-text-soft dark:tw-border-line-dark dark:tw-text-text-darksoft">
+            <span data-ui-search-status>热门 / 最新资料</span>
+            <span>按 Enter 查看完整结果</span>
+        </div>
+
+        <div class="tw-min-h-0 tw-flex-1 tw-overflow-y-auto" data-ui-search-results></div>
+
+        <div class="tw-border-t tw-border-line-light tw-p-3 dark:tw-border-line-dark">
+            <button class="tw-hidden tw-h-9 tw-w-full tw-items-center tw-justify-center tw-gap-1.5 tw-rounded-md tw-border tw-border-line-light tw-bg-slate-50 tw-text-sm tw-font-medium tw-text-text-soft tw-transition-colors hover:tw-bg-slate-100 hover:tw-text-text-light disabled:tw-opacity-70 dark:tw-border-line-dark dark:tw-bg-surface-dark dark:tw-text-text-darksoft dark:hover:tw-bg-[#2a2a2a] dark:hover:tw-text-text-dark" type="button" data-ui-search-more>
+                <span class="tw-icon-[mdi--chevron-down]"></span>加载更多
+            </button>
+        </div>
+    </div>
+</div>
+<script src="/zhiwawa_v4/dist/zww-feature-config.js?v=1788234942"></script>
+<script>window.ZWW_V4_RESOURCE_REVISION="20260824-01";</script>
+<script type="module" crossorigin src="/zhiwawa_v4/dist/assets/main-C8IhQN5R.js"></script>
+<script src="/public/assets/js/app.js?v=1794016082"></script>
+<script src="/public/assets/js/ui.js?v=1783389724"></script>
+<script src="/public/assets/js/global-search.js?v=1788311168"></script>
+</body>
+</html>

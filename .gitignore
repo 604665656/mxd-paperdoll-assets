@@ -1,0 +1,16 @@
+# 中间产物 / 缓存(体积巨大, 不入仓库)
+wz_preview/_cache/
+__pycache__/
+*.pyc
+*.log
+*.part
+*.tmp
+*.404
+*.empty
+.ds_store
+thumbs.db
+
+# 下载器运行日志
+_dbs_fetch.log
+_wz_*.log
+img_fail.txt

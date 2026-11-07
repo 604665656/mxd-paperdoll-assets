@@ -1,0 +1,110 @@
+/* Account dialog and drawer follow the shared DVG account palette. */
+.member-auth-modal,
+.member-drawer {
+    --account-surface: #fff;
+    --account-body: #f2f3f5;
+    --account-card: #fff;
+    --account-input: #f2f3f5;
+    --account-text: #191a1c;
+    --account-muted: #475569;
+    --account-highlight: #fffced;
+    --account-accent: #ffdb22;
+    --account-focus: #d4ad00;
+}
+:is(.dark, .tw-dark) :is(.member-auth-modal, .member-drawer) {
+    --account-surface: #202122;
+    --account-body: #171819;
+    --account-card: #232527;
+    --account-input: #303235;
+    --account-text: #f1f2f4;
+    --account-muted: #b9bec6;
+    --account-highlight: #2c2b23;
+    --account-focus: #ffdb22;
+}
+.member-auth-modal { z-index: 1220; }
+:is(.dark, .tw-dark) .member-auth-modal { background-color: rgba(0, 0, 0, .8); }
+.member-auth-dialog {
+    max-height: calc(100vh - 32px);
+    max-height: calc(100dvh - 32px);
+    overflow-y: auto;
+    border-radius: 6px;
+    background: var(--account-surface);
+    color: var(--account-text);
+    box-shadow: none;
+}
+.member-auth-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 20px;
+    background: var(--account-accent);
+    color: #191a1c;
+    font-size: 18px;
+    font-weight: 700;
+}
+:is(.dark, .tw-dark) .member-auth-brand { background: #292a26; color: var(--account-accent); }
+.member-auth-brand-icon { width: 28px; height: 28px; flex-shrink: 0; fill: currentColor; }
+.member-auth-brand-caption { margin-left: 8px; font-size: 12px; font-weight: 500; }
+:is(.dark, .tw-dark) .member-auth-brand-caption { color: #c1c3bd; }
+.member-auth-brand .member-auth-brand-close {
+    margin-left: auto;
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+    background: rgba(0, 0, 0, .06);
+    color: inherit;
+}
+.member-auth-brand .member-auth-brand-close:hover { background: rgba(0, 0, 0, .1); }
+:is(.dark, .tw-dark) .member-auth-brand .member-auth-brand-close { background: rgba(255, 255, 255, .06); color: var(--account-muted); }
+:is(.dark, .tw-dark) .member-auth-brand .member-auth-brand-close:hover { background: rgba(255, 255, 255, .1); color: #fff; }
+.member-auth-modal .member-auth-tab { color: var(--account-muted); }
+.member-auth-modal .member-auth-tab.is-active { border-color: var(--account-focus); color: var(--account-text); }
+:is(.dark, .tw-dark) .member-auth-tab.is-active { color: var(--account-accent); }
+.member-auth-modal :is(label, [data-open-forgot], .member-auth-divider, #register-email-policy-tip) { color: var(--account-muted); }
+.member-auth-modal [data-open-forgot]:hover { text-decoration: underline; text-underline-offset: 4px; }
+.member-auth-modal input[type="checkbox"] { width: 14px; height: 14px; flex-shrink: 0; accent-color: #d5af00; }
+.member-auth-modal #register-email-policy-tip { background: var(--account-highlight); }
+.member-auth-modal .member-wechat-btn { background: #047857; color: #fff; }
+.member-auth-modal .member-wechat-btn:hover { background: #065f46; color: #fff; }
+
+.member-drawer {
+    border: 0;
+    height: 100dvh;
+    background: var(--account-surface);
+    box-shadow: -8px 0 24px rgba(15, 23, 42, .16), -1px 0 3px rgba(15, 23, 42, .10);
+}
+:is(.dark, .tw-dark) .member-drawer { box-shadow: -10px 0 28px rgba(0, 0, 0, .46), -1px 0 0 rgba(255, 255, 255, .08); }
+.member-drawer :is(.member-drawer-head, .member-drawer-foot) { border: 0; flex-shrink: 0; background: var(--account-surface); }
+.member-drawer .member-drawer-foot { display: flex; justify-content: flex-end; padding: 12px 16px; }
+.member-drawer .member-drawer-foot.tw-hidden { display: none; }
+.member-drawer .member-drawer-icon { background: var(--account-accent); color: #191a1c; }
+.member-drawer .member-drawer-body { min-height: 0; padding: 12px; background: var(--account-body); }
+.member-drawer .member-card { border: 0; background: var(--account-card); }
+.member-drawer [data-profile-view] .member-card:first-child { background: var(--account-highlight); }
+.member-drawer :is(.member-pill, .member-level-badge, .member-points-badge, .member-qq-group-link, .member-points-bill-link) { border-color: transparent; }
+:is(.member-auth-modal, .member-drawer) .member-input {
+    border-color: transparent;
+    background: var(--account-input);
+    color: var(--account-text);
+}
+:is(.member-auth-modal, .member-drawer) .member-input::placeholder { color: var(--account-muted); }
+.member-drawer .member-input-warn { background: var(--account-highlight); }
+:is(.member-auth-modal, .member-drawer) input.member-input:focus {
+    border-color: var(--account-focus) !important;
+    background: var(--account-input);
+}
+.member-auth-modal :is([data-submit-login], [data-submit-register]),
+.member-drawer :is(.member-btn-dark, .member-btn-amber) {
+    border-color: transparent;
+    background: var(--account-accent);
+    color: #191a1c;
+    font-weight: 600;
+}
+.member-auth-modal :is([data-submit-login], [data-submit-register]):hover,
+.member-drawer :is(.member-btn-dark, .member-btn-amber):hover { background: #f0c900; color: #191a1c; }
+.member-auth-modal .member-btn-soft,
+.member-drawer :is(.member-btn-sky, .member-btn-soft) { border-color: transparent; background: var(--account-input); color: var(--account-muted); }
+.member-auth-modal .member-btn-soft:hover,
+.member-drawer :is(.member-btn-sky, .member-btn-soft):hover { filter: brightness(.92); }
+.member-auth-modal :is(button, a):focus-visible,
+.member-drawer :is(button, a):focus-visible { outline: 2px solid var(--account-focus); outline-offset: 2px; }
